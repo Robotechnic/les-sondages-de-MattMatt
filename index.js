@@ -9,13 +9,23 @@ app.use(express.static(__dirname+"/public"))
 //setup sqllite database
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(__dirname+"/sondages.db");
-db.serialize();
 
+//setup routes
+const admin = require("./routes/adminPanel")(db)
+const sondage = require("./routes/sondage")(db)
 
+app.get("",(req,res)=>{
 
-db.close()
+})
 
+app.use("/admin",admin)
+app.use("/sondage",sondage)
 
+//404
+app.use((app,res,next)=>{
+	res.setHeader('Content-Type', 'text/plain');
+    res.status(404).send('Page introuvable !');
+})
 server.listen(port,()=>{
 	console.log("le serveur écoute sur",port)
 })
