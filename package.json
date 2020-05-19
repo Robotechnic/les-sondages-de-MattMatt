@@ -4,7 +4,8 @@
   "description": "Site de sondages pour les lives de MattMatt",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scss": "scss --watch ./scss:./public/css --style compressed"
   },
   "repository": {
     "type": "git",

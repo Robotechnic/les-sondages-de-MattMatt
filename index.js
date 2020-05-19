@@ -15,7 +15,7 @@ const admin = require("./routes/adminPanel")(db)
 const sondage = require("./routes/sondage")(db)
 
 app.get("",(req,res)=>{
-
+	res.render("index.ejs",{})
 })
 
 app.use("/admin",admin)
