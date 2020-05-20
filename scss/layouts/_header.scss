@@ -1,0 +1,26 @@
+.header{
+	background-color:$headerBackground;
+	display: flex;
+	position: sticky;
+	color: $headerFooterColor;
+	border-bottom:solid 3px lighten($separator, 20%);
+	&__title{
+		padding-left:5px;
+	}
+	&__menu{
+		margin-top: auto;
+		margin-left: auto;
+		padding-bottom: 5px;
+		padding-right: 5px;
+		>a{
+			text-decoration: none;
+			color:$headerFooterColor;
+			cursor: pointer;
+			font-weight:normal;
+		}
+		>a:hover{
+			font-weight: bold;
+			color:$separator;
+		}
+	}
+}

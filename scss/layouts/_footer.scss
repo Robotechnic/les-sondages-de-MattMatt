@@ -1,0 +1,8 @@
+.footer{
+	background-color:$headerBackground;
+	display: flex;
+	margin-top:10px;
+	color: $headerFooterColor;
+	border-top:solid 3px lighten($separator, 20%);
+	padding:5px;
+}

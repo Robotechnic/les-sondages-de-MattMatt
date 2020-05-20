@@ -13,13 +13,15 @@ var db = new sqlite3.Database(__dirname+"/sondages.db");
 //setup routes
 const admin = require("./routes/adminPanel")(db)
 const sondage = require("./routes/sondage")(db)
+const users = require("./routes/login")(db)
 
 app.get("",(req,res)=>{
-	res.render("index.ejs",{})
+	res.render("index.ejs",{host:req.headers.host})
 })
 
 app.use("/admin",admin)
 app.use("/sondage",sondage)
+app.use("/users",users)
 
 //404
 app.use((app,res,next)=>{

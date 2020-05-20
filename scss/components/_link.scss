@@ -1,0 +1,5 @@
+a{
+	color:lightblue;
+	font-weight:bold;
+	@include applyStyleMap($linkStyle);
+}

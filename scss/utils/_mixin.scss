@@ -1,0 +1,9 @@
+@mixin applyStyleMap($styleMap){
+	@each $type, $style in $styleMap{
+		&:#{$type}{
+			@each $command, $atribute in $style{
+				#{$command}:$atribute;
+			}
+		}
+	}
+}
