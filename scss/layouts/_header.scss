@@ -1,9 +1,11 @@
 .header{
 	background-color:$headerBackground;
 	display: flex;
-	position: sticky;
+	// position: sticky;
 	color: $headerFooterColor;
 	border-bottom:solid 3px lighten($separator, 20%);
+	// position: -webkit-sticky;
+	top:0px;
 	&__title{
 		padding-left:5px;
 	}

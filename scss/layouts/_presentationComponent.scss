@@ -1,0 +1,18 @@
+.presentationComponent{
+	background:$presentationComponentBG;
+	border-radius:10px;
+	margin: 5px;
+	padding:5px;
+	&__logo{
+		margin-left: auto;
+		margin-right: auto;
+		display:block;
+	}
+	&__title{
+		text-align: center;
+	}
+	&__text{
+		text-align: center;
+		max-width: 400px;
+	}
+}

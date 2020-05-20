@@ -1,0 +1,34 @@
+.clientSitation{
+	min-height: 64px;
+	min-width:50vw;
+	margin-left: 25vw;
+	margin-right: 25vw;
+	display:flex;
+	font-family: 'Patrick Hand', cursive;
+	font-size: 30px;
+	background:$quoteBGColor;
+	color:$quoteTextColor;
+	border-radius: 20px;
+	padding:5px;
+
+	&:before {
+		content: '"';
+		font-size: 45px;
+		color:$quoteColor;
+	}
+	&:after {
+		content: '"';
+		font-size: 45px;
+		align-self:end;
+		color:$quoteColor;
+	}
+	&__text{
+		width:100%;
+	}
+	&__author{
+		font-style: italic;
+		color:$quoteAuthorColor;
+		text-align: right;
+	}
+}
+

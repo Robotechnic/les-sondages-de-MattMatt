@@ -7,3 +7,36 @@ $linkStyle: (
 	)
 
 );
+
+$presentationSliderTranslate: (
+	translate:(
+		from:0%,
+		to:18%,
+		value:0vw
+	),
+	translate1:(
+		from:20%,
+		to:38%,
+		value:-100vw
+	),
+	translate2:(
+		from:40%,
+		to:58%,
+		value:-200vw
+	),
+	translate3:(
+		from:60%,
+		to:78%,
+		value:-300vw
+	),
+	translate4:(
+		from:80%,
+		to:95%,
+		value:-400vw
+	),
+	translate5:(
+		from:96%,
+		to:100%,
+		value:0vw
+	)
+);
