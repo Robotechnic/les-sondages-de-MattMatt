@@ -1,13 +1,15 @@
 .header{
+	position:relative;
 	background-color:$headerBackground;
 	display: flex;
-	// position: sticky;
 	color: $headerFooterColor;
 	border-bottom:solid 3px lighten($separator, 20%);
-	// position: -webkit-sticky;
-	top:0px;
+	//top:0px;
+	min-height:15vh;
 	&__title{
-		padding-left:5px;
+		padding:5px;
+		height:100%;
+		//font-size: calc(100% - 10px);
 	}
 	&__menu{
 		margin-top: auto;
@@ -24,5 +26,53 @@
 			font-weight: bold;
 			color:$separator;
 		}
+	}
+	&__menu-button-responsive{
+		position:absolute;
+		z-index: -9999999;
+		top:-9999999999px;
+		left:-999999999px;
+		visibility: hidden;
+	} 
+	&__label-responsive{
+		display:none;
+		cursor:pointer;
+		&-close{
+			display:none;		
+		}
+	}
+
+	@media screen and (max-width: map-get($breakPointMap,header)){
+		&__menu{
+			display:none;
+			position:absolute;
+			top:100%;
+			right:0;
+			width:100vw;
+			height: 100vh;
+			flex-direction: column;
+			background:$headerBackground;
+			margin:0;
+			padding:10px;
+			transform: translateY(3px);
+			>a{
+				text-transform: uppercase;
+				width:100%;
+				border-bottom:2px solid white;
+				margin-bottom:5px;
+				text-align: center;
+			}
+		}
+		&__label-responsive{
+			display:block;
+			margin-top: auto;
+			margin-left: auto;
+			margin-right:5px;
+			margin-bottom: auto;
+		}
+		&__menu-button-responsive:checked + &__menu{
+			display:flex;
+		}
+		
 	}
 }

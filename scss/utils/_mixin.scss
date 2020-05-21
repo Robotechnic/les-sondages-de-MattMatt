@@ -8,13 +8,13 @@
 	}
 }
 
-@mixin createSliderAnimation($animMap,$commande){
+@mixin createSliderAnimation($animMap){
 	@each $name, $data in $animMap{
 		#{map-get($data,from)}{
-			#{$commande}:map-get($data,value);
+			transform:translateX(map-get($data,value));
 		}
 		#{map-get($data,to)}{
-			#{$commande}:map-get($data,value);
+			transform:translateX(map-get($data,value));
 		}
 	}
 }

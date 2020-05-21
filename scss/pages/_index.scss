@@ -1,24 +1,32 @@
 .artPresentation{
 	background: no-repeat url("/images/art.jpg");
-	height: 500px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	padding-left: 5px;
 	padding-right:5px;
+	min-height:85vh;
 	&__text{
-		font-size: 20px;
+		font-size: 20px; 
 		overflow:wrap;
 		text-align: center;
 	}
+	
 }
 .fonctionalityPresentation{
-	display:flex;
-	flex-wrap: wrap;
-	justify-content:space-around;
+	display:grid;
+	grid-template-columns:1fr 1fr 1fr;
+	grid-gap:15px;
 	background:$functionalityBackground;
-	padding-top:10px;
-	padding-bottom:10px;
+	padding:10px;
+	min-height:100vh;
+	@media screen and (max-width: map-get($breakPointMap,presentation2)) {
+		grid-template-columns:1fr 1fr;
+	}
+	
+	@media screen and (max-width: map-get($breakPointMap,presentation1)) {
+		grid-template-columns:1fr;
+	}
 }
 .convaincrePresentation{
 	padding:10px;
@@ -33,7 +41,7 @@
 }
 
 @keyframes sliderAnimation{
-	@include createSliderAnimation($presentationSliderTranslate,translate);
+	@include createSliderAnimation($presentationSliderTranslate);
 }
 
 
@@ -41,8 +49,8 @@
 	background:#0C6291;
 	overflow:hidden;
 	padding-top:100px;
-	padding-bottom:100px;
-	&__slider{
+	padding-bottom:50px;
+	&__slider{ 
 		display:flex;
 		animation-duration: 20s;
 		animation-name: sliderAnimation;
