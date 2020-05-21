@@ -103,6 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
+#custom
 *.db-journal
 
 *.xcf
+
+public/css/noprefix
