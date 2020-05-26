@@ -7,13 +7,16 @@ const regexVlidator = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}[]:;<
 
 module.exports = (db) =>{
 	router.get("/login",(req,res)=>{
-		res.render("logIn.ejs")
+		res.render("logIn.ejs",{error:[]})
 	})
 	router.post("/login",(req,res)=>{
 		console.log(req.body)
 	})
 	router.get("/signIn",(req,res)=>{
 		res.render("signIn.ejs")
+	})
+	router.post("/signIn",(req,res)=>{
+		console.log(req.body)
 	})
 
 	router.get("/exist/",(req,res)=>{
