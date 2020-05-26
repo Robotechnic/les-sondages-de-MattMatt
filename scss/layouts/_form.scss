@@ -1,0 +1,13 @@
+form{
+	background-color:$formBG;
+	color:$formColor;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	flex-direction: column;
+	padding:10px;
+	height:100%;
+	>*{
+		margin: 2px;
+	}
+}

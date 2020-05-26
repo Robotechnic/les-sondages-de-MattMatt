@@ -8,12 +8,22 @@ app.use(express.static(__dirname+"/public"))
 
 //setup sqllite database
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(__dirname+"/sondages.db");
+var db = new sqlite3.Database(__dirname+"/sondages.db",sqlite3.OPEN_READWRITE, (err)=>{
+	if (err)
+		throw err
+	console.log("db connected with success")
+
+})
+
+//setup body-parser
+const bodyParser = require ("body-parser")
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 //setup routes
-const admin = require("./routes/adminPanel")(db)
+const admin = require("./routes/gestion")(db)
 const sondage = require("./routes/sondage")(db)
-const users = require("./routes/login")(db)
+const users = require("./routes/users")(db)
 
 app.get("",(req,res)=>{
 	res.render("index.ejs",{host:req.headers.host})

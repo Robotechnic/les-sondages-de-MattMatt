@@ -4,10 +4,14 @@
 @import "./utils/mixin";
 @import "./base/base";
 @import "./components/link";
+@import "./components/input";
 @import "./layouts/presentationComponent";
 @import "./layouts/quoteComponent";
 @import "./layouts/footer";
 @import "./layouts/header";
+@import "./layouts/form";
+@import "./layouts/formInstruction";
 @import "./pages/adminPanel";
 @import "./pages/index";
 @import "./pages/sondages";
+@import "./pages/signInLogIn";

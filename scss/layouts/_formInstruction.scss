@@ -1,0 +1,39 @@
+.instruction-contener{
+	background: $formInstructionBG;
+	display:flex;
+	flex-direction: column;
+	color:$formInstructionColor;
+	padding: 5px;
+	border-radius: 5px;
+	font-size: $formInstructionSize;
+	&__instruction{
+		color:red;
+		&::before{
+			margin-right: 3px;
+			content:"❌";
+			color:red;
+		}
+	}
+	&__instruction.valide{
+		color:green;
+		&::before{
+			content:"✔";
+			color:green;
+		}
+	}
+	&__instruction.loading{
+		color:grey;
+		display: flex;
+		align-content: center;
+		&::before{
+			$newSize:calc(#{$formInstructionSize} * 1.5);
+			background-image:url("/images/pulse.gif");
+			background-size: cover;
+			width:$newSize;
+			height: $newSize;
+			color:grey;
+			display:inline-block;
+			content:"";
+		}
+	}
+}

@@ -1,0 +1,20 @@
+input {
+	border:1px solid grey;
+	border-radius:5px;
+	font-size: 15px;
+	padding:1px;
+
+	// &:invalid{
+	// 	border:red;
+	// 	box-shadow: 0px 0px 15px 5px red;
+	// }
+	&[type="submit"]{
+		cursor: pointer;
+		transition-duration: 0.5s;
+		&:hover{
+			color:white;
+			background:darken(grey,15%);
+		}
+	}
+	
+}
