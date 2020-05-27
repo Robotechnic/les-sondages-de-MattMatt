@@ -18,6 +18,28 @@ module.exports = (db) =>{
 		})
 	}
 
+	passwordCorrect = (pseudo,password,callback)=>{
+		let query = "SELECT * FROM users WHERE pseudo = ?"
+		db.get(query,[pseudo],(err,row)=>{
+			if (err)
+				throw err
+			//verify if user exist
+			//console.log(row)
+			if (row){
+				bcrypt.compare(password,row.password, (err,result)=>{
+					if (result){
+						callback(true,"",row)
+					}
+					else{
+						callback(false,"Le mot de passe est incorect",{})
+					}
+				})
+			} else {
+				callback(false,"L'utilisateur n'existe pas.",{})
+			}
+		})
+	}
+
 	router.get("/login",(req,res)=>{
 		res.render("logIn.ejs",{connected:req.session.connected || false})
 	})
@@ -25,29 +47,18 @@ module.exports = (db) =>{
 	router.post("/login",(req,res)=>{
 		var body = req.body
 		//console.log(body)
-		let query = "SELECT pseudo, password, isAdmin FROM users WHERE pseudo = ?"
-		db.get(query,[body.pseudo],(err,row)=>{
-			if (err)
-				throw err
-			//verify if user exist
-			//console.log(row)
-			if (row){
-				bcrypt.compare(body.password,row.password, (err,result)=>{
-					if (result){
-						req.session.connected = true
-						req.session.pseudo = row.pseudo
-						//if is admin, verify in bdd else don't verify
-						req.session.isAdmin = row.isAdmin
-						//console.log(row)
-						res.redirect("../../")
-					}
-					else{
-						res.render("logIn.ejs",{connected:req.session.connected || false,pseudo:body.pseudo,error:"Le mot de passe est incorect"})
-					}
-				})
-
-			} else {
-				res.render("logIn.ejs",{connected:req.session.connected || false,pseudo:body.pseudo,error:"Le pseudo n'existe pas"})
+		passwordCorrect(body.pseudo,body.password,(isCorrect,err,row)=>{
+			if (isCorrect){
+				req.session.connected = true
+				req.session.pseudo = row.pseudo
+				req.session.userId = row.id
+				//if is admin, verify in bdd else don't verify
+				req.session.isAdmin = row.isAdmin
+				//console.log(row)
+				res.redirect("../../")
+			}
+			else{
+				res.render("logIn.ejs",{connected:req.session.connected || false,pseudo:body.pseudo,error:err})
 			}
 		})
 	})
@@ -93,7 +104,7 @@ module.exports = (db) =>{
 							})
 						}	
 						else{
-							res.render("signIn.ejs",{connected:req.session.connected || false,pseudo:body.pseudo,error:"Le mot de passe est incorect"})
+							res.render("signIn.ejs",{connected:req.session.connected || false,pseudo:body.pseudo,error:"Le mot de passe ne correspond pas au format attendu"})
 						}
 					}
 				}
@@ -105,20 +116,83 @@ module.exports = (db) =>{
 
 	router.get("/configuration",(req,res)=>{
 		if (req.session.connected){
-			var pseudo = session.pseudo
-			res.render("userConfiguration.ejs",{connected:req.session.connected || false,pseudo:body.pseudo})
+			var pseudo = req.session.pseudo
+			res.render("userConfiguration.ejs",{connected:req.session.connected || false,pseudo:pseudo})
 		}
 		else{
 			res.redirect("../../")
 		}
 	})
 
-	router.post("/passwordChange",(req,res)=>{
-		
+	router.post("/pseudoChange",(req,res)=>{
+		if (req.session.connected){
+			var pseudo = req.body.pseudo
+			//verify pseudo
+			if (pseudo < 4 || pseudo > 15){
+				res.render("userConfiguration.ejs",{connected:req.session.connected || false,pseudo:pseudo,error:"Le pseudo ne fait pas la bonne longueur."})
+			}
+			else{
+				userExist(pseudo,(exist)=>{
+					if (exist)
+					{
+						res.render("userConfiguration.ejs",{connected:req.session.connected || false,pseudo:body.pseudo,error:"Le pseudo existe déjà."})
+					} else {
+						//update bdd
+						let query = "UPDATE users SET pseudo=? WHERE id=?"
+						console.log(pseudo,req.session.userId)
+						db.run(query,[pseudo,req.session.userId],(err)=>{
+							if (err)
+								throw err
+							req.session.pseudo = pseudo
+							res.redirect("/users/configuration")
+						})
+					}
+				})
+			}
+			//res.render("userConfiguration.ejs",{connected:req.session.connected || false,pseudo:pseudo})
+		} else {
+			res.redirect("../../")
+		}
 	})
 
-	router.post("/pseudoChange",(req,res)=>{
-		
+	router.post("/passwordChange",(req,res)=>{
+		if (req.session.connected){
+			var pseudo = req.session.pseudo
+			var body = req.body
+			passwordCorrect(pseudo,body.holdPassword,(passwordCorrect,err,row) => {
+				//verify if passwords match
+				if (passwordCorrect){
+					if (body.password != body.passwordRepeat)
+						res.render("userConfiguration.ejs",{connected:req.session.connected || false,pseudo:body.pseudo,error:"Les mots de passes ne correspondent pas."})
+					else {
+						//veridy if password match with regex
+						if (body.password.match(passwordValidator)){
+							let query = "UPDATE users SET password=? WHERE id=?"
+
+							//hash password
+							bcrypt.hash(body.password,saltRound,(err,hash)=>{
+								if (err)
+									throw err
+								db.run(query,[hash,req.session.userId],(err) =>{
+									if (err)
+										throw err
+									res.redirect("../../")
+								})
+							})
+						}
+						else{
+							res.render("userConfiguration.ejs",{connected:req.session.connected || false,pseudo:body.pseudo,error:"Le mot de passe ne correspond pas au format attendu"})
+						}
+					}
+				} else {
+					res.render("userConfiguration.ejs",{connected:req.session.connected || false,pseudo:body.pseudo,error:err})
+				}
+			})
+		}
+		else{
+			res.redirect("../../")
+		}
+			
 	})
 
 	router.get("/exist/",(req,res)=>{
