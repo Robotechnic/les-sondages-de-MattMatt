@@ -16,12 +16,14 @@
 					id="pseudo" 
 					required 
 					minlength="4" 
+					maxlength="15"
 					autofocus
 					placeholder="Pseudo"
+					value="<%if(locals.pseudo){%><%=pseudo%><%}%>" 
 			>
 			<div class="instruction-contener">
 				<label class="instruction-contener__instruction" id="pseudoValidator">Le pseudo est disponible</label>
-				<label class="instruction-contener__instruction" id="pseudoLengthValidator">Le pseudo fait au moins 4 caractères</label>
+				<label class="instruction-contener__instruction" id="pseudoLengthValidator">Le pseudo fait au moins 4 caractères<br/> mais moins de 15 caractéres</label>
 			</div>
 			<label For="pseudo">Mot de passe:</label>
 			<input 	type="password" 
@@ -60,5 +62,10 @@
 	</section>
 	<%- include ("parts/footer.ejs") %>
 	<script type="text/javascript" src="/js/signIn.js"></script>
+	<script type="text/javascript"> <!-- Error script-->
+		<% if (locals.error) {%>
+			alert("<%=error%>")
+		<% } %>
+	</script>
 </body>
 </html>

@@ -32,6 +32,9 @@ pseudoHttpRequest.addEventListener('load', () => {
 	
 })
 
+/*
+	PSEUDO VALIDATOR
+*/
 
 pseudoInput.addEventListener("input", ()=>{
 	//send a request to the server
@@ -44,7 +47,7 @@ pseudoInput.addEventListener("input", ()=>{
 	pseudoValidator.classList.add("loading")
 	pseudoHttpRequest.send(null)
 
-	if (pseudo.length > 4){
+	if (pseudo.length > 4 && pseudo.length < 16){
 		pseudoLengthValidator.classList.add('valide')
 	}
 	else{

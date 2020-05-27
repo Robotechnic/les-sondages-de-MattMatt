@@ -10,11 +10,10 @@
 	<section class="form-contener">
 			<form action="" method="POST" autocomplete="on" class="form-contener__form">
 			<h2>Connexion</h2>
-			<% if (error.length > 0) {%>
+			<% if (locals.error) 
+				if (error.length > 0) {%>
 				<div class="instruction-contener">
-
-					<label class="instruction-contener__instruction">Le pseudo est disponible</label>
-					<label class="instruction-contener__instruction">Le pseudo fait au moins 4 caractères</label>
+					<label class="instruction-contener__instruction"><%= error%></label>
 				</div>
 			<% } %>
 				<label For="pseudo">Pseudo:</label>
@@ -25,6 +24,7 @@
 						minlength="4" 
 						autofocus
 						placeholder="Pseudo"
+						value="<%if(locals.pseudo){%><%=pseudo%><%}%>"
 				>
 				<label For="pseudo">Mot de passe:</label>
 				<input 	type="password" 

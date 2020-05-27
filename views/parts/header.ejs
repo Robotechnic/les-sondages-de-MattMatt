@@ -4,8 +4,16 @@
 	<nav class="header__menu">
 	</label>
 		<a href="/">Accueil</a>
-		<a href="/users/login">Log In</a>
-		<a href="/users/signIn">Sign In</a>
+		<% if (connected) {%>
+			<a href="/gestion/create">Créer</a>
+			<a href="/gestion/">Mes sondages</a>
+			<a href="/users/configuration">Paramètres</a>
+			<a href="/users/disconnect">Déconexion</a>
+		<%} else {%>
+			<a href="/users/login">Log In</a>
+			<a href="/users/signIn">Sign In</a>
+		<%}%>
+
 	</nav>
 	<label For="header__menu-button-responsive" class="header__label-responsive">
 		<img src="/images/menu.png">

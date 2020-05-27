@@ -25,12 +25,15 @@
 		"ejs": "^3.1.3",
 		"express": "^4.17.1",
 		"express-session": "^1.17.1",
+		"helmet": "^3.22.0",
 		"node-gyp": "^6.1.0",
 		"socket.io": "^2.3.0",
 		"sqlite3": "^4.2.0"
 	},
 	"browserslist": "last 4 versions",
 	"nodemonConfig": {
-			"ignore": ["public/*"]
+		"ignore": [
+			"public/*"
+		]
 	}
 }
