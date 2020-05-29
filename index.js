@@ -28,7 +28,15 @@ app.use(bodyParser.json())
 const session = require("express-session")
 const sessionSecret = "aRandomSecretThatMustBeChanged3141592"
 
+//setup session storage
+const SQLiteStore = require('connect-sqlite3')(session)
+
 app.use(session({
+	store: new SQLiteStore({
+		db:"sondages.db",
+		dir:__dirname,
+		concurrentDB:true
+	}),
 	name:"userID",
 	resave:false,
 	saveUninitialized:false,
