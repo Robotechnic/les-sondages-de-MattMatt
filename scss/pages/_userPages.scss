@@ -2,18 +2,3 @@ h2{
 	width:100%;
 	text-align: center;
 }
-
-.form-contener{
-	width:100%;
-	min-height: 70vh;
-	display: flex;
-	align-content: center;
-	justify-content: center;
-	background: $formContenerBG;
-	&__form{
-		margin-top: 10px;
-		margin-bottom: 10px;
-		border-radius: 10px;
-		
-	}
-}

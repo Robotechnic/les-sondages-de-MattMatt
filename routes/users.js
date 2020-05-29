@@ -120,7 +120,7 @@ module.exports = (db) =>{
 			res.render("userConfiguration.ejs",{connected:req.session.connected || false,pseudo:pseudo})
 		}
 		else{
-			res.redirect("../../")
+			res.redirect("../../users/logIn")
 		}
 	})
 
@@ -151,7 +151,7 @@ module.exports = (db) =>{
 			}
 			//res.render("userConfiguration.ejs",{connected:req.session.connected || false,pseudo:pseudo})
 		} else {
-			res.redirect("../../")
+			res.redirect("../../users/logIn")
 		}
 	})
 
@@ -188,9 +188,8 @@ module.exports = (db) =>{
 					res.render("userConfiguration.ejs",{connected:req.session.connected || false,pseudo:body.pseudo,error:err})
 				}
 			})
-		}
-		else{
-			res.redirect("../../")
+		} else {
+			res.redirect("../../users/logIn")
 		}
 			
 	})

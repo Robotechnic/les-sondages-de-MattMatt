@@ -1,0 +1,24 @@
+.tableSondage{
+	border-collapse:collapse;
+	td{
+		border:1px solid grey;
+		padding: 3px;
+		text-align: center;
+	}
+	button {
+		cursor: pointer;
+		border:1px solid grey;
+		border-radius:5px;
+		font-size: 15px;
+		padding:2px;
+		transition-duration:0.5s;
+		&:hover{
+			border:1px solid lightblue;
+		}
+	}
+	&__body{
+		tr:nth-child(2n){
+			background-color: #55AAFF1E;
+		}
+	}
+}
