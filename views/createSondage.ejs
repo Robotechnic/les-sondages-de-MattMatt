@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Les sondages de MattMatt - Création de sondage</title>
+	<%- include ("parts/include.ejs") %>
+</head>
+<body>
+	<%- include ("parts/header.ejs") %>
+	<section class="form-contener">
+		<form action="" method="POST" autocomplete="on" class="form-contener__form">
+			<label For="title">Titre</label>
+			<input 	type="text"
+					name="title" 
+					id="title" 
+					required 
+					minlength="4" 
+					maxlength="30"
+					autofocus
+					placeholder="Titre"
+					value="<%if(locals.title){%><%=title%><%}%>" 
+			>
+			<div class="instruction-contener">
+				<label class="instruction-contener__instruction" id="titleValidator">Le titre est disponible</label>
+				<label class="instruction-contener__instruction" id="titleLengthValidator">Le titre fait au moins 4 caractères<br/> mais moins de 30 caractéres</label>
+			</div>
+			<label For="description">Description:</label>
+			<textarea id="description"  placeholder="Description" name="description"><%if(locals.description){%><%=description%><%}%></textarea>
+			<input type="checkbox" name="passwordCheckBox" id="passwordCheckBox">
+			<label For="passwordCheckBox" class="checkboxLabel">Mot de passe requis</label>
+			<div class="form-contener__form__passwordContener">
+				<label For="password">Mot de passe:</label>
+				<input 	type="password" 
+						name="password" 
+						id="password" 
+						minlength="8"
+						placeholder="Mot de passe"
+				>
+				<div class="instruction-contener">
+					<label 	class="instruction-contener__instruction" 
+							id="passwordNumberValidator">Le mot de passe contient un nombre</label>
+					<label 	class="instruction-contener__instruction"
+							id="passwordMajValidator">Le mot de passe contient une majuscule</label>
+					<label 	class="instruction-contener__instruction"
+							id="passwordMinValidator">Le mot de passe contient une minuscule</label>
+					<label 	class="instruction-contener__instruction"
+							id="passwordSpetialValidator">Le mot de passe contient un caractère<br/> spétial (*.! @#$%^&(){}[]:;<>,.?/~_+-=|\)</label>
+					<label 	class="instruction-contener__instruction"
+							id="passwordLengthValidator">Le mot de passe fait au moins 8 caractères</label>
+				</div>
+			</div>
+			<input type="submit" name="submit" value="Créer!">
+		</form>
+	</section>
+	<%- include ("parts/footer.ejs") %>
+	<script type="text/javascript" src="/js/createSondage.js"></script>
+	<!-- Error script-->
+	<script type="text/javascript"> 
+		<% if (locals.error) {%>
+			alert("<%=error%>")
+		<% } %>
+	</script>
+</body>
+</html>

@@ -73,7 +73,8 @@
 	</section>
 	<%- include ("parts/footer.ejs") %>
 	<script type="text/javascript" src="/js/signIn.js"></script>
-	<script type="text/javascript"> <!-- Error script-->
+	<!-- Error script-->
+	<script type="text/javascript">
 		<% if (locals.error) {%>
 			alert("<%=error%>")
 		<% } %>

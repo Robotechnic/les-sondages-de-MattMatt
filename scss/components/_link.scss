@@ -1,5 +1,5 @@
 a{
-	color:lightblue;
+	color:$linkColor;
 	font-weight:bold;
 	@include applyStyleMap($linkStyle);
 }

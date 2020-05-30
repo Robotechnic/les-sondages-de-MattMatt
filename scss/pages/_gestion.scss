@@ -1,15 +1,23 @@
 h3{
 	text-align: center;
 }
+
 .table-contener{
 	background: $formContenerBG;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	padding: 20px;
+	min-height:80vh;
 	> div{
 		background:white;
 		border-radius:10px;
 		padding:20px;
+	}
+	h2 + a {
+		display:block;
+		margin-left: auto;
+		margin-right: auto;
+		text-align: center;
 	}
 }

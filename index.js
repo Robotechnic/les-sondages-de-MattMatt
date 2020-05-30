@@ -44,7 +44,7 @@ app.use(session({
 	cookie:{
 		//secure:true,
 		httpOnly:true,
-		maxAge:604800000
+		maxAge:604800000 //one week
 	}
 }))
 

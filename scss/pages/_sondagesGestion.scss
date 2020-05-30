@@ -1,0 +1,8 @@
+.form-contener__form__passwordContener{
+	display: none;
+	flex-direction: column;
+
+}
+#passwordCheckBox:checked ~ .form-contener__form__passwordContener{
+	display:flex;
+}

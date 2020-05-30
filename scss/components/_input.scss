@@ -16,5 +16,24 @@ input {
 			background:darken(grey,15%);
 		}
 	}
+
+	&[type="checkbox"] {
+		display: none;
+	}
+	&[type="checkbox"] + label {
+		cursor:pointer;
+	}
+	&[type="checkbox"] + label::before {
+		cursor:pointer;
+		content:'';
+		border: 1px solid #00B7E8;
+		border-radius:5px;
+		padding: 0 0.6rem;
+		margin-right: 0.3rem;
+	}
+	&[type="checkbox"]:checked + label::before {
+		background-color: #00B7E8;
+	}
 	
 }
+

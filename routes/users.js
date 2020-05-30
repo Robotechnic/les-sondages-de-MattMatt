@@ -69,6 +69,9 @@ module.exports = (db) =>{
 	router.post("/signIn",(req,res)=>{
 		var body = req.body
 		body.pseudo = escape(body.pseudo)
+		body.pseudo = body.pseudo.replace("\n","")
+		body.pseudo = body.pseudo.replace("\t","")
+		body.pseudo = body.pseudo.replace("\r","")
 		//console.log(body)
 		//first, verify if the pseudo exist
 		userExist(req.query.user,(exist)=>{
