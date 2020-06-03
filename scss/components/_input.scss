@@ -17,13 +17,13 @@ input {
 		}
 	}
 
-	&[type="checkbox"] {
+	&[type="checkbox"]:not(.normal){
 		display: none;
 	}
-	&[type="checkbox"] + label {
+	&[type="checkbox"]:not(.normal) + label {
 		cursor:pointer;
 	}
-	&[type="checkbox"] + label::before {
+	&[type="checkbox"]:not(.normal) + label::before {
 		cursor:pointer;
 		content:'';
 		border: 1px solid #00B7E8;

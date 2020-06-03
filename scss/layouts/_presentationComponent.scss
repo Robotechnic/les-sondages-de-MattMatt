@@ -10,11 +10,21 @@
 	&__title{
 		text-align: center;
 	}
-	&__text{
+	&__content{
 		display:block;
 		margin-left: auto;
 		margin-right:auto;
 		text-align: center;
 		max-width: 400px;
+		&__list{
+			text-align: left;
+			//list-style: none;
+		}
+
+		&-extended{
+			@extend .presentationComponent__content;
+			max-width: 700px;
+			width: 50vw;
+		}
 	}
 }

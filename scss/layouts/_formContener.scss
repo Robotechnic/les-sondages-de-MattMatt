@@ -10,6 +10,10 @@
 		margin-top: 10px;
 		margin-bottom: 10px;
 		border-radius: 10px;
-		
+	}
+	&-column{
+		@extend .form-contener;
+		flex-direction: column;
+		align-items:center;
 	}
 }

@@ -12,8 +12,18 @@ document.querySelectorAll(".deleteButton").forEach((element)=>{
 		{
 			console.log(sender.id)
 			var id = sender.id.split(".")[1]
-			window.location = String(window.location.origin)+"/gestion/delete?id="+id
+			var token = sender.id.split(".")[2]
+			window.location = String(window.location.origin)+"/gestion/delete/"+id+"?token="+token
 
 		}
+	})
+})
+
+//edit buttons
+document.querySelectorAll(".editButton").forEach((element)=>{
+	element.addEventListener("click",(event)=>{
+		let sender = event.target
+		var id = sender.id.split(".")[1]
+		window.location = String(window.location.origin)+"/gestion/edit/"+id
 	})
 })

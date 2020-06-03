@@ -35,14 +35,19 @@ titleHttpRequest.addEventListener('load', () => {
 titleInput.addEventListener("input", ()=>{
 	//send a request to the server
 	var title = titleInput.value
-	var encodedtitle = encodeURIComponent(title)
-	console.log("get user at",window.origin+"/gestion/exist?title="+encodedtitle)
+	var baseTitle = baseTitle || "";
 
-	titleHttpRequest.open('GET',window.origin+"/gestion/exist?title="+encodedtitle)
-	titleValidator.classList.remove("valide")
-	titleValidator.classList.add("loading")
-	titleHttpRequest.send(null)
+	if (baseTitle == title){
+		titleValidator.classList.add("valide")
+	} else {
+		var encodedtitle = encodeURIComponent(title)
+		console.log("get user at",window.origin+"/gestion/exist?title="+encodedtitle)
 
+		titleHttpRequest.open('GET',window.origin+"/gestion/exist?title="+encodedtitle)
+		titleValidator.classList.remove("valide")
+		titleValidator.classList.add("loading")
+		titleHttpRequest.send(null)
+	}
 	if (title.length > 4 && title.length < 31){
 		titleLengthValidator.classList.add('valide')
 	}
@@ -59,7 +64,6 @@ titleInput.addEventListener("input", ()=>{
 */
 
 var passwordInput            = document.getElementById("password")
-var passwordVerif            = document.getElementById("passwordRepeat")
 var passwordNumberValidator  = document.getElementById("passwordNumberValidator")
 var passwordMajValidator     = document.getElementById("passwordMajValidator")
 var passwordMinValidator     = document.getElementById("passwordMinValidator")
@@ -74,7 +78,6 @@ var spetialRegex = /[*.!@$%^&(){}\[\]:;<>,.\?\/\~_\+\-=\|]{1,}/
 
 passwordInput.addEventListener("input", ()=>{
 	var password = passwordInput.value
-	var passwordRepeat = passwordVerif.value
 
 	//verify if passwors contains least one number
 	if (password.match(numberRegex)){
@@ -114,10 +117,5 @@ passwordInput.addEventListener("input", ()=>{
 	}
 	else{
 		passwordLengthValidator.classList.remove("valide")
-	}
-	if (passwordRepeat == password && passwordRepeat.length > 0){
-		matchPasswordValidator.classList.add("valide")
-	} else {
-		matchPasswordValidator.classList.remove("valide")
 	}
 })

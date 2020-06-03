@@ -6,6 +6,8 @@ const saltRound = 10
 
 const passwordValidator = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}\[\]:;<>,.\?\/\~_\+\-=\|]).{8,}$/
 
+var escape = require('escape-html');
+
 module.exports = (db) =>{
 
 	userExist = (user, callback) =>{
