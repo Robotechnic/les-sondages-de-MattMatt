@@ -6,15 +6,22 @@ var questionsContener = document.querySelector(".form-contener__form")
 */
 
 document.getElementById("addQuestion").addEventListener("click",(event)=>{
-	if(title = prompt("Titre du sondage (vide pour annuler):\nIl doit faire moins de 30 caractères mais plus de 4 caractères.")){
-		if (title.length < 4 || title.length > 30)
-			alert("Le titre ne fait pas la bonne longueur.")
-		else
-		{
-			var id = event.target.name.split(".")[0]
-			var token = event.target.name.split(".")[1]
-			window.location = String(window.location.origin)+"/gestion/addQuestion/"+id+"/"+encodeURI(title)+"?token="+token
-		}
+	document.getElementById("newQuestion").style.display = "block"
+	event.target.style.display = "none";
+})
+
+document.getElementById("cancel").addEventListener("click",(event)=>{
+	document.getElementById("newQuestion").style.display = ""
+	document.getElementById("addQuestion").style.display = "";
+})
+
+document.getElementById("newQuestion").addEventListener("submit", (event)=>{
+	var title = event.target.title.value
+	console.log(title)
+	if (title.length < 4 || title.length > 30)
+	{
+		alert("Le titre ne fait pas la bonne longueur.")
+		event.preventDefault();
 	}
 })
 

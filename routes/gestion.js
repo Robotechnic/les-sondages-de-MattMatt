@@ -210,16 +210,16 @@ module.exports = (db) =>{
 		}
 	})
 
-	router.get("/addQuestion/:id/:title",(req,res) => {
+	router.post("/addQuestion/:id",(req,res) => {
 		if (req.session.connected){
 			if (req.session.tempToken == req.query.token){
 				if (req.params.id.match(idPatern)){
-					if (req.params.title.length < 4 || req.params.title.length > 30){
+					if (req.body.title.length < 4 || req.body.title.length > 30){
 						res.redirect("/gestion/edit/"+req.params.id+"?error="+encodeURI("Le titre ne fait pas la bonne longueur."))
 					}else{
 						let query = "INSERT INTO questions (idSondage,question) VALUES (?,?)"
 
-						db.run(query,[req.params.id,req.params.title],(err)=>{
+						db.run(query,[req.params.id,req.body.title],(err)=>{
 							if (err)
 								throw err
 							res.redirect("/gestion/edit/"+req.params.id)
@@ -227,6 +227,36 @@ module.exports = (db) =>{
 					}
 				} else {
 					res.redirect("/gestion/")
+				}
+			} else {
+				res.redirect("/gestion/")
+			}
+		} else {
+			res.redirect("/users/logIn")
+		}
+	})
+
+	router.get("/deleteQuestion/:idSondage/:idQuestion",(req,res)=>{
+		if (req.session.connected){
+			//console.log('connected')
+			if (req.session.tempToken == req.query.token && req.params.idSondage.match(idPatern)){
+				///console.log('tokenOk\nidSondage ok')
+				if (req.params.idQuestion.match(idPatern)){
+					//console.log('connected')
+					isOwner(req.session.userId,req.params.idSondage,(owner,row)=>{
+						if (owner){
+							let query = "DELETE FROM questions WHERE id=? AND idSondage=?"
+							db.run(query,[req.params.idQuestion,req.params.idSondage],(err)=>{
+								if (err)
+									throw err
+								res.redirect("/gestion/edit/"+req.params.idSondage)
+							})
+						} else {
+							res.redirect("/gestion/")
+						}
+					})
+				} else {
+					res.redirect("/gestion/edit/"+req.params.idSondage)
 				}
 			} else {
 				res.redirect("/gestion/")
