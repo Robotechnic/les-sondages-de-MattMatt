@@ -1,6 +1,7 @@
 .sondage-header{
-	position: sticky;
-	top:0;
+	//position: sticky;
+	//top:0;
+	position:relative;
 	padding:5px;
 	display: flex;
 	flex-direction: column;
@@ -82,4 +83,30 @@
 		text-decoration: none;
 		background:white;
 	}
+}
+
+.sondageContener{
+	padding:10px;
+	.presentationComponent{
+		margin-top:5px;
+		margin-bottom: 5px;
+		position:relative;
+	}
+}
+
+.deleteButton, .saveButton, .addButton{
+	border:none;
+	margin:1px;
+	padding:1px;
+	background:none;
+	cursor:pointer;
+	font-size: 15px;
+	img{
+		height:15px;
+		width:15px;
+	}
+}
+
+#newQuestion{
+	display:none;
 }

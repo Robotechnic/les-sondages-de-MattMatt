@@ -76,7 +76,7 @@ var majRegex     = /[A-Z]{1,}/
 var minRegex     = /[a-z]{1,}/
 var spetialRegex = /[*.!@$%^&(){}\[\]:;<>,.\?\/\~_\+\-=\|]{1,}/
 
-passwordInput.addEventListener("input", ()=>{
+verif = () => {
 	var password = passwordInput.value
 
 	//verify if passwors contains least one number
@@ -118,4 +118,7 @@ passwordInput.addEventListener("input", ()=>{
 	else{
 		passwordLengthValidator.classList.remove("valide")
 	}
-})
+}
+
+passwordInput.addEventListener("input",verif)
+verif()

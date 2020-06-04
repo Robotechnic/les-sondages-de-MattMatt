@@ -72,6 +72,7 @@
 		}
 		&__menu-button-responsive:checked + &__menu{
 			display:flex;
+			z-index:9999999999999999999;
 		}
 		
 	}

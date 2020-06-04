@@ -112,16 +112,23 @@ module.exports = (db) =>{
 	})
 
 
-	router.get("/edit/:idSondage",(req,res)=>{
+	router.get("/edit/:id",(req,res)=>{
 		if (req.session.connected){
-			isOwner(req.session.userId,req.params.idSondage,(owner,row)=>{
+			isOwner(req.session.userId,req.params.id,(owner,sondageRow)=>{
 				if (owner){
-					let query = ""
-					req.session.tempToken = randomString()
-					res.render("editSondage.ejs",{
-						connected:req.session.connected || false,
-						data:row,
-						token:req.session.tempToken
+					let query = "SELECT * FROM questions WHERE idSondage=?"
+					db.all(query,[req.params.id],(err,questionsRow)=>{
+						if (err)
+							throw err
+						req.session.tempToken = randomString()
+						// console.log(questionsRow)
+						res.render("editSondage.ejs",{
+							connected:req.session.connected || false,
+							data:sondageRow,
+							questions:questionsRow,
+							token:req.session.tempToken,
+							error:req.query.error
+						})
 					})
 				} else {
 					res.redirect("/gestion/")
@@ -166,17 +173,7 @@ module.exports = (db) =>{
 							res.redirect("/gestion/edit/"+req.params.id)
 						})
 					} else {
-						isOwner(req.session.userId,req.params.id,(owner,row)=>{
-							if (owner)
-								res.render("editSondage.ejs",{
-									connected:req.session.connected || false,
-									data:row,
-									token:req.session.tempToken,
-									error:"Le mot de passe ne correspond pas a la politique de sécurité des Sondages de MattMatt."
-								})
-							else
-								res.redirect("/users/logIn")
-						})
+						res.redirect("/gestion/edit/"+req.params.id+"?error="+encodeURI("Le mot de passe ne correspond pas a la politique de sécurité des Sondages de MattMatt.")+"#editParams")
 					}
 				} else {
 					res.redirect("/gestion/")
@@ -202,6 +199,32 @@ module.exports = (db) =>{
 							throw err
 						res.redirect("/gestion/")
 					})
+				} else {
+					res.redirect("/gestion/")
+				}
+			} else {
+				res.redirect("/gestion/")
+			}
+		} else {
+			res.redirect("/users/logIn")
+		}
+	})
+
+	router.get("/addQuestion/:id/:title",(req,res) => {
+		if (req.session.connected){
+			if (req.session.tempToken == req.query.token){
+				if (req.params.id.match(idPatern)){
+					if (req.params.title.length < 4 || req.params.title.length > 30){
+						res.redirect("/gestion/edit/"+req.params.id+"?error="+encodeURI("Le titre ne fait pas la bonne longueur."))
+					}else{
+						let query = "INSERT INTO questions (idSondage,question) VALUES (?,?)"
+
+						db.run(query,[req.params.id,req.params.title],(err)=>{
+							if (err)
+								throw err
+							res.redirect("/gestion/edit/"+req.params.id)
+						})
+					}
 				} else {
 					res.redirect("/gestion/")
 				}

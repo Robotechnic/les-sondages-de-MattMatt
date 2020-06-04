@@ -1,119 +1,99 @@
-/*
-	PASSWORD VALIDATOR
-*/
-var passwordInput            = document.getElementById("password")
-var passwordNumberValidator  = document.getElementById("passwordNumberValidator")
-var passwordMajValidator     = document.getElementById("passwordMajValidator")
-var passwordMinValidator     = document.getElementById("passwordMinValidator")
-var passwordSpetialValidator = document.getElementById("passwordSpetialValidator")
-var passwordLengthValidator  = document.getElementById("passwordLengthValidator")
-var matchPasswordValidator   = document.getElementById("matchPasswordValidator")
-
-var numberRegex  = /[0-9]{1,}/
-var majRegex     = /[A-Z]{1,}/
-var minRegex     = /[a-z]{1,}/
-var spetialRegex = /[*.!@$%^&(){}\[\]:;<>,.\?\/\~_\+\-=\|]{1,}/
-
-verif = () => {
-	var password = passwordInput.value
-
-	//verify if passwors contains least one number
-	if (password.match(numberRegex)){
-		passwordNumberValidator.classList.add("valide")
-	}
-	else{
-		passwordNumberValidator.classList.remove("valide")
-	}
-
-	//verify if passwors contains least one capital letter
-	if (password.match(majRegex)){
-		passwordMajValidator.classList.add("valide")
-	}
-	else{
-		passwordMajValidator.classList.remove("valide")
-	}
-
-	//verify if passwors contains least one letter
-	if (password.match(minRegex)){
-		passwordMinValidator.classList.add("valide")
-	}
-	else{
-		passwordMinValidator.classList.remove("valide")
-	}
-
-	//verify if passwors contains least one spetial caracter
-	if (password.match(spetialRegex)){
-		passwordSpetialValidator.classList.add("valide")
-	}
-	else{
-		passwordSpetialValidator.classList.remove("valide")
-	}
-
-	//verify if passwors contains least one spetial caracter
-	if (password.length > 8){
-		passwordLengthValidator.classList.add("valide")
-	}
-	else{
-		passwordLengthValidator.classList.remove("valide")
-	}
-}
-
-passwordInput.addEventListener("input",verif)
-verif()
-
 var questionsContener = document.querySelector(".form-contener__form")
 
-createNewQuestion = (questionId,questionTitle,responses,type="single") =>{
-	var contener        = document.createElement("div")
-	contener.className  = "presentationComponent"
-	
-	var title           = document.createElement("h3")
-	title.className     = "presentationComponent__title"
-	console.log(document.createTextNode(title))
-	title.appendChild(document.createTextNode(questionTitle))
-	contener.appendChild(title)
 
-	var content         = document.createElement("nav")
-	content.className   = "presentationComponent__content-extended"
+/*
+	ADD SONDAGE
+*/
 
-	var questions       = document.createElement("ol")
-	questions.className = "presentationComponent__content__list"
-	
-	content.appendChild(questions)
-	contener.appendChild(content)
-
-	responses.forEach( (element, index) => {
-		let listElement = document.createElement("li")
-		let input = document.createElement("input")
-		let label = document.createElement("label")
-		switch (type) {
-			case "multiple":
-				input.setAttribute("type", "checkbox")
-				input.className = "normal"
-				break
-			case "single":
-				input.setAttribute("type", "radio")
-				input.setAttribute("required","")
-				break
-			default:
-				console.error("Le type spétifié n'existe pas")
-				return
-				break
+document.getElementById("addQuestion").addEventListener("click",(event)=>{
+	if(title = prompt("Titre du sondage (vide pour annuler):\nIl doit faire moins de 30 caractères mais plus de 4 caractères.")){
+		if (title.length < 4 || title.length > 30)
+			alert("Le titre ne fait pas la bonne longueur.")
+		else
+		{
+			var id = event.target.name.split(".")[0]
+			var token = event.target.name.split(".")[1]
+			window.location = String(window.location.origin)+"/gestion/addQuestion/"+id+"/"+encodeURI(title)+"?token="+token
 		}
-		input.setAttribute("name","responseFor"+String(questionId))
-		input.setAttribute("id","responseFor"+String(questionId)+"_"+String(index))
+	}
+})
 
-		label.appendChild(document.createTextNode(element))
-		label.setAttribute("For","responseFor"+String(questionId)+"_"+String(index))
+addToolBarInput = () =>{
+	console.log('add button for input')
+	document.querySelectorAll(".presentationComponent__content__list__question-element__contener").forEach((element)=>{
+		var id="delete."+element.id
+		var idNav="toolbar."+element.id.split(".")[0]+"."+element.id.split(".")[1]
+			//console.log(id)
 
-		listElement.appendChild(input)
-		listElement.appendChild(label)
+		var toolBoxElement = document.getElementById(idNav)
+		if (toolBoxElement == undefined || typeof(toolBoxElement) == null){
+			var toolbar = document.createElement("nav")
+			toolbar.setAttribute("id",idNav)
+			toolbar.className = "presentationComponent__content__list__question-element__contener__toolbar"
+			var button  = document.createElement("button")
+			button.setAttribute("id",id)
+			button.className = "deleteButton"
+			var img     = document.createElement("img")
+			img.setAttribute("src","/images/trash.png")
 
-		//console.log(listElement)
-
-		questions.appendChild(listElement)
+			button.appendChild(img)
+			toolbar.appendChild(button)
+			element.appendChild(toolbar)
+		}
 	})
-
-	questionsContener.appendChild(contener)
 }
 
+// addToolBarQuestion = () =>{
+// 	console.log('add button for questions')
+// 	document.querySelectorAll(".presentationComponent").forEach( (element, index) => {
+// 		var questionIndex = element.id.split('.')[1]
+// 		var idNav         = "toolbar."+questionIndex
+// 		var id            = element.id.split('.')[2]
+// 		var token         = element.id.split(".")[3]
+
+// 		var toolBoxElement = document.getElementById(idNav)
+// 		//console.log("toolBar",toolBoxElement)
+// 		if (toolBoxElement == undefined || typeof(toolBoxElement) == null){
+// 			console.log('addNav')
+
+// 			var toolbar = document.createElement("nav")
+// 			toolbar.setAttribute("id",idNav)
+// 			toolbar.className = "presentationComponent__toolBar"
+
+// 			var typeChoice = document.createElement("input")
+// 			typeChoice.setAttribute("id","typeChoice."+id+".multiple")
+// 			typeChoice.setAttribute("name","typeChoice."+id)
+// 			typeChoice.setAttribute("type","checkbox")
+// 			toolbar.appendChild(typeChoice)
+
+// 			var labelTypeCHoice = document.createElement("label")
+// 			labelTypeCHoice.setAttribute("For","typeChoice."+id+".multiple")
+// 			labelTypeCHoice.appendChild(document.createTextNode("Réponses multiples"))
+// 			toolbar.appendChild(labelTypeCHoice)
+
+
+
+// 			var saveButton  = document.createElement("button")
+// 			saveButton.setAttribute("id","saveQuestion."+id+"."+token)
+// 			saveButton.className = "saveButton"
+// 			var img     = document.createElement("img")
+// 			img.setAttribute("src","/images/save.png")
+
+// 			saveButton.appendChild(img)
+// 			toolbar.appendChild(saveButton)
+
+// 			var deleteButton  = document.createElement("button")
+// 			deleteButton.setAttribute("id","deleteQuestion."+id+"."+token)
+// 			deleteButton.className = "deleteButton"
+// 			var img     = document.createElement("img")
+// 			img.setAttribute("src","/images/trash.png")
+
+// 			deleteButton.appendChild(img)
+// 			toolbar.appendChild(deleteButton)
+
+// 			element.prepend(toolbar)
+// 		}	
+// 	})
+// }
+
+addToolBarInput()

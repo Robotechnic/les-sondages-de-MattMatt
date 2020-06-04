@@ -1,7 +1,12 @@
 .presentationComponent{
 	background:$presentationComponentBG;
 	border-radius:10px;
-	padding:5px;
+	padding:10px;
+	
+	display:flex;
+	flex-direction: column;
+	align-items: center;
+
 	&__logo{
 		margin-left: auto;
 		margin-right: auto;
@@ -12,19 +17,65 @@
 	}
 	&__content{
 		display:block;
-		margin-left: auto;
-		margin-right:auto;
 		text-align: center;
 		max-width: 400px;
 		&__list{
 			text-align: left;
-			//list-style: none;
+			&__question-element{
+				&__contener{
+					display:flex;
+				}
+			}
 		}
 
 		&-extended{
 			@extend .presentationComponent__content;
 			max-width: 700px;
-			width: 50vw;
+			width: auto;
+			&__addChoiceButton{
+				border:none;
+				margin:1px;
+				padding:1px;
+				background:none;
+				cursor:pointer;
+				font-size: 30px;
+				img{
+					height:30px;
+					width:30px;
+				}
+			}
+		}
+	}
+	
+	&__toolBar{
+		position:absolute;
+		right:0;
+		top:2px;
+		padding-right:5px;
+	}
+
+	
+
+	@media screen and (min-width: map-get($breakPointMap,editSondageToolBar)){
+		&__toolBar{
+			display:none;
+		}
+		&:hover &__toolBar{
+			display:block;
+		}
+	}
+
+	&__content__list__question-element__contener{
+		position:relative;
+		@media screen and (min-width: map-get($breakPointMap,editSondageToolBar)){
+			&__toolbar{
+			display:none;
+			position:absolute;
+			right:-20px;
+			}
+			&:hover &__toolbar{
+				display:block;
+			}	
 		}
 	}
 }

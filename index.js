@@ -16,8 +16,10 @@ var db = new sqlite3.Database(__dirname+"/sondages.db",sqlite3.OPEN_READWRITE, (
 	if (err)
 		throw err
 	console.log("db connected with success")
-
 })
+
+db.run("PRAGMA foreign_keys = ON")
+
 
 //setup body-parser
 const bodyParser = require ("body-parser")

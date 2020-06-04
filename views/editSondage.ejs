@@ -16,48 +16,55 @@
 		<p class="sondage-header__description"><%-data.description.replace(/\n/g,"<br/>")%></p>
 		<a class="sondage-header__edit" id="editButton" href="#editParams">Éditer</a>
 	</section>
-	<section class="form-contener-column">
+	<section class="form-contener-column sondageContener">
 		<nav class="form-contener__form" method="POST" action="">
 			<% if (locals.questions) {
 				questions.forEach((question,index)=>{%>
-					<div class="presentationComponent">
+					<div class="presentationComponent" id="question.<%=index%>.<%=question.id%>.<%=token%>">
+						<nav class="presentationComponent__toolBar" id="toolbar.<%=index%>">
+							<input 
+								type="checkbox" 
+								name="typeChoice.<%=question.id%>"
+								id="typeChoice.<%=question.id%>.multiple">
+							<label For="typeChoice.<%=question.id%>.multiple">
+								Réponses multiples
+							</label>
+							<button class="saveButton" id="saveQuestion.<%=question.id%>.<%=token%>">
+								<img src="/images/save.png">
+							</button>
+							<button class="deleteButton" id="deleteQuestion.<%=question.id%>.<%=token%>">
+								<img src="/images/trash.png">
+							</button>
+						</nav>
+						
 						<h3 class="presentationComponent__title"><%=question.question%></h3>
 						<div class="presentationComponent__content-extended">
 							<ol class="presentationComponent__content__list">
-								<% var temp = question.choix.split("\n")
-								temp.forEach((choix,indexChoix)=>{
-									switch (questions[i].type) {
-										case "single":%>
-											<li>
-												<input 	type="radio" 
-														name="test"
-														required 
-														name="responseFor<%=question.id%>" 
-														id="responseFor<%=question.id%>_<%=indexChoix%>">
-												<label For="responseFor<%=question.id%>_<%=indexChoix%>">
-													<%=choix%>
-												</label>
-											</li>
-										<% break;
-										case "multiple":%>
-												<input 	type="radio" 
-														name="test"
-														required 
-														name="responseFor<%=question.id%>" 
-														id="responseFor<%=question.id%>_<%=indexChoix%>">
-												<label For="responseFor<%=question.id%>_<%=indexChoix%>">
-													<%=choix%>		
-												</label>
-										<%break;
-									}
-								})%>
+								<% var temp = JSON.parse(question.choix)
+								temp.forEach((choix,indexChoix)=>{%>
+									<li class="presentationComponent__content__list__question-element">
+										<div 
+										class="presentationComponent__content__list__question-element__contener"
+										id="<%=question.id%>.<%=indexChoix%>.<%=token%>">
+											<label For="responseFor<%=question.id%>_<%=indexChoix%>">
+											<input 
+												type="text" 
+												name="textValue<%=question.id%>_<%=indexChoix%>"
+												value="<%=choix%>">
+											</label>
+										</div>
+									</li>
+								<%})%>
 							</ol>
+							<button class="presentationComponent__content-extended__addChoiceButton" name="addCHoice.<%=question.id%>.<%=token%>">
+								<img src="/images/add.png">
+							</button>
 						</div>
 					</div>
 			<%	})
 			}%>
 		</nav>
-		<button class="addQuestion">
+		<button class="addQuestion" id="addQuestion" name="<%=data.id%>.<%=token%>">
 			+
 		</button>
 	</section>
@@ -97,9 +104,29 @@
 			<input type="submit" name="submit" value="Enregistrer">
 		</form>
 	</section>
+	<section class="form-contener" id="newQuestion">
+		<form class="form-contener__form">
+			<label For="title">Titre</label>
+			<input 	type="text"
+					name="title" 
+					id="title" 
+					required 
+					minlength="4" 
+					maxlength="30"
+					autofocus
+					placeholder="Titre"
+			>
+			<div class="instruction-contener">
+				<label class="instruction-contener__instruction" id="titleValidator">Le titre est disponible</label>
+				<label class="instruction-contener__instruction" id="titleLengthValidator">Le titre fait au moins 4 caractères<br/> mais moins de 30 caractéres</label>
+			</div>
+			<input type="submit" name="submit" value="Valider">
+		</form>
+	</section>
 	<%- include ("parts/footer.ejs") %>
 
 	<script type="text/javascript" src="/js/editSondage.js"></script>
+	<script type="text/javascript" src="/js/createSondage.js"></script>
 	<!-- Error script-->
 	<script type="text/javascript"> 
 		<% if (locals.error) {%>
