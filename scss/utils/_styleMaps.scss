@@ -11,31 +11,36 @@ $linkStyle: (
 $presentationSliderTranslate: (
 	translate:(
 		from:0%,
-		to:18%,
+		to:13%,
 		value:0vw
 	),
 	translate1:(
-		from:20%,
-		to:38%,
+		from:15%,
+		to:28%,
 		value:-100vw
 	),
 	translate2:(
-		from:40%,
-		to:58%,
+		from:30%,
+		to:43%,
 		value:-200vw
 	),
 	translate3:(
-		from:60%,
-		to:78%,
+		from:45%,
+		to:58%,
 		value:-300vw
 	),
 	translate4:(
-		from:80%,
-		to:95%,
+		from:60%,
+		to:73%,
 		value:-400vw
 	),
 	translate5:(
-		from:96%,
+		from:75%,
+		to:95%,
+		value:-500vw
+	),
+	translate6:(
+		from:97%,
 		to:100%,
 		value:0vw
 	)

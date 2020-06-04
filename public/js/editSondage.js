@@ -104,3 +104,10 @@ addToolBarInput = () =>{
 // }
 
 addToolBarInput()
+
+
+/*
+	ADD choice setup
+*/
+var choiceGestion = new XMLHttpRequest()
+
