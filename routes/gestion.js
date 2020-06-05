@@ -47,44 +47,77 @@ module.exports = (db) =>{
 		})
 	})
 
-	router.get("/edit/:id/:idQuestion/addChoice",(req,res)=>{
+	router.post("/edit/:id/:idQuestion/updateChoixList",(req,res)=>{
+		//verify if is connected
 		if (req.session.connected){
+			//verify if token is valid
 			if (req.session.tempToken == req.query.token){
+				//check the id
 				if (req.params.id.match(idPatern) && req.params.idQuestion.match(idPatern)){
+						//check if the session own this sondage
 						isOwner(req.session.userId,req.params.id,(owner,sondageData)=>{
 							if (owner){
-								let query = "SELECT choix FROM questions WHERE id=? AND idSondage=?"
+								//check if question exist and if this sondage own the question
+								let query = "SELECT choix,type FROM questions WHERE id=? AND idSondage=?"
 								db.get(query,[req.params.idQuestion,req.params.id],(err,row)=>{
 									if (err)
 										throw err
 									if (row){
-										var data = JSON.parse(row.choix)
-										//console.log(typeof data)
-										//console.log(data)
-										var index = data.push(" ")
-										let query = "UPDATE questions SET choix=? WHERE id=? AND idSondage=?"
-										db.run(query,[JSON.stringify(data),req.params.idQuestion,req.params.id],(err)=>{
-											if (err)
-												throw err
-											res.send([true,"",Number(index)])
-										})
+										try{
+											var questionType = JSON.parse(req.body.multiple)
+											var questionType = questionType ? "multiple" : "single"
+										} catch(e) {
+											//console.log("Données invalides")
+											res.send([false,"Données invalides"])
+											return
+										}
+										
+										//check if data are changed
+										if (req.body.choices != row.choix || questionType != row.type){
+											//check data types
+											try {
+												var data = JSON.parse(req.body.choices)
+												if(data.filter((element)=>{
+													return typeof element != "string"
+												}).length > 0){
+													res.send([false,"Données invalides"])
+													return
+												}
+											} catch(e) {
+												// data are invalid = error
+												//console.log("Données invalides")
+												res.send([false,"Données invalides"])
+												return
+											}
+
+											console.log(data)
+											//update data base
+											let query = "UPDATE questions SET choix=?, type=? WHERE id=? AND idSondage=?"
+											db.run(query,[JSON.stringify(data),questionType,req.params.idQuestion,req.params.id],(err)=>{
+												if (err)
+													throw err
+												res.send([true,"",req.params.idQuestion])
+											})
+										} else {
+											res.send([true,"",-1])
+										}
 									} else {
-										res.send([false,"sondage or question doesn't exist",0])
+										res.send([false,"sondage or question doesn't exist"])
 									}
 									
 								})
 							} else {
-								res.send([false,"not owner",0])
+								res.send([false,"not owner"])
 							}
 						})
 					} else {
-						res.send([false,"wrong id",0])
+						res.send([false,"wrong id"])
 					}
 				} else {
-					res.status(498).send([false,"expired token",0])
+					res.status(498).send([false,"expired token"])
 				}
 			} else {
-				res.status(401).send([false,"please connect",0])
+				res.status(401).send([false,"please connect"])
 			}
 	})
 

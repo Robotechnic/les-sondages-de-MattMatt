@@ -20,16 +20,20 @@
 		<nav class="form-contener__form" method="POST" action="">
 			<% if (locals.questions) {
 				questions.forEach((question,index)=>{%>
-					<div class="presentationComponent" id="question.<%=index%>.<%=question.id%>.<%=token%>">
+					<div class="presentationComponent" id="question.<%=question.id%>">
 						<nav class="presentationComponent__toolBar" id="toolbar.<%=index%>">
-							<input 
+							<input
 								type="checkbox" 
 								name="typeChoice.<%=question.id%>"
-								id="typeChoice.<%=question.id%>.multiple">
+								id="typeChoice.<%=question.id%>.multiple"
+								<% if (question.type == "multiple") {%>
+									checked
+								<%}%>
+								>
 							<label For="typeChoice.<%=question.id%>.multiple">
 								Réponses multiples
 							</label>
-							<button class="saveButton" id="saveQuestion.<%=question.id%>.<%=token%>">
+							<button class="saveButton" id="saveQuestion.<%=data.id%>.<%=question.id%>.<%=token%>">
 								<img src="/images/save.png">
 							</button>
 							<a class="deleteButton" id="deleteQuestion.<%=question.id%>.<%=token%>" href="/gestion/deleteQuestion/<%=data.id%>/<%=question.id%>/?token=<%=token%>">
@@ -50,6 +54,7 @@
 											<input 
 												type="text" 
 												name="textValue.<%=question.id%>.<%=indexChoix%>"
+												class="choicesTextInput"
 												value="<%=choix%>">
 											</label>
 										</div>

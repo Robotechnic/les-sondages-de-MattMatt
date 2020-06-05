@@ -67,6 +67,7 @@ buttonToolBarEvent = (event) =>{
 
 	if (action == "delete"){
 		buttonsList.removeChild(choix)
+		document.getElementById("question."+questionId).classList.add("unsaved")
 	} else if (action == "down"){
 		console.log("down")
 		console.log(choix,buttonsList.lastChild)
@@ -78,6 +79,7 @@ buttonToolBarEvent = (event) =>{
 			buttonsList.insertBefore(choix, downElement)
 		} else
 			buttonsList.insertBefore(downElement, choix)
+		document.getElementById("question."+questionId).classList.add("unsaved")
 
 	} else if (action == "up") {
 		var upElement = choix.previousElementSibling
@@ -88,6 +90,7 @@ buttonToolBarEvent = (event) =>{
 			buttonsList.insertBefore(upElement, choix)
 		} else
 			buttonsList.insertBefore(choix, upElement)
+		document.getElementById("question."+questionId).classList.add("unsaved")
 	}
 }
 
@@ -149,7 +152,7 @@ addToolBarInput()
 
 
 /*
-	choice setup
+	CHOICE SETUP
 */
 var saveCHoices = new XMLHttpRequest()
 
@@ -179,6 +182,7 @@ document.querySelectorAll(".presentationComponent__content-extended__addChoiceBu
 		//console.log("list."+questionId)
 
 		var buttonsList = document.getElementById("list."+questionId)
+		document.getElementById("question."+questionId).classList.add("unsaved")
 		var lastIndex   =  indexMap[buttonsList.id]
 		indexMap[buttonsList.id] += 1
 
@@ -193,6 +197,7 @@ document.querySelectorAll(".presentationComponent__content-extended__addChoiceBu
 		contener.setAttribute("id",questionId+"."+String(lastIndex)+"."+token)
 		var label             = document.createElement("label")
 		var textInput         = document.createElement("input")
+		textInput.className = "choicesTextInput"
 		textInput.setAttribute("type","text")
 		textInput.setAttribute("name","textValue."+questionId+"."+String(lastIndex))
 
@@ -216,5 +221,78 @@ document.querySelectorAll(".presentationComponent__content-extended__addChoiceBu
 				</label>
 			</div>
 		</li>*/
+	})
+})
+
+
+//save button
+
+saveCHoices.addEventListener("readystatechange",(event)=>{
+	if (saveCHoices.readyState == XMLHttpRequest.DONE){
+		if (saveCHoices.status == 404){
+			alert("Erreur:\nCode 404,\nMessage: page introuvable,\nVeullez contacter l'administrateur pour plus d'informations.")
+			return
+		}
+		var response = JSON.parse(saveCHoices.responseText)
+		console.log(response)
+		if (saveCHoices.status == 200){
+			if (response[0] == true){
+				//console.log(response[2])
+				if (response[2] != undefined)
+					if (response[2] != -1)
+						document.getElementById("question."+response[2]).classList.remove("unsaved")
+			} else {
+				alert("Erreur:\nMessage:"+response[1])
+			}
+			
+		} else {
+			alert("Erreur:\nCode "+String(saveCHoices.status)+",\nMessage:"+response[1]+",\nVeullez contacter l'administrateur pour plus d'informations.")
+		}
+	}
+})
+
+saveQuestion = (id,questionId,token) =>{
+	var buttonsList = document.getElementById("list."+questionId)
+		
+	var choices = []
+	Array.from(buttonsList.getElementsByClassName("choicesTextInput")).forEach( (element, index) => {
+		choices.push(element.value)
+	})
+
+	var typeChoice = document.getElementById("typeChoice."+questionId+".multiple")
+
+
+	//console.log(JSON.stringify(choices))
+
+	//create url
+	saveCHoices.open("POST","/gestion/edit/"+id+"/"+questionId+"/updateChoixList?token="+token)
+	saveCHoices.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	saveCHoices.send("choices="+JSON.stringify(choices)+"&multiple="+String(typeChoice.checked))
+}
+
+
+document.querySelectorAll(".choicesTextInput").forEach( (element, index) => {
+	element.addEventListener("input",(event)=>{
+		console.log('change')
+		var questionId = event.target.name.split(".")[1]
+		document.getElementById("question."+questionId).classList.add("unsaved")
+	})	
+})
+
+document.querySelectorAll(".saveButton").forEach((element)=>{
+	element.addEventListener("click",(event)=>{
+		var sender     = event.target
+
+		if(sender.nodeName == "IMG")
+			sender = sender.parentNode
+
+		var id         = sender.id.split(".")[1]
+		var questionId = sender.id.split(".")[2]
+		var token      = sender.id.split(".")[3]
+		console.log(id,questionId,token)
+		
+
+		//save
+		saveQuestion(id,questionId,token)
 	})
 })
