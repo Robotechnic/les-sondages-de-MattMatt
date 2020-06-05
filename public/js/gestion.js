@@ -19,6 +19,16 @@ document.querySelectorAll(".deleteButton").forEach((element)=>{
 	})
 })
 
+//generate Link Button
+document.querySelectorAll(".generateLinkButton").forEach((element)=>{
+	element.addEventListener("click",(event)=>{
+		let sender = event.target
+		var id = sender.id.split(".")[1]
+		window.location = String(window.location.origin)+"/sondage/generateLink/"+id
+	})
+})
+
+
 //edit buttons
 document.querySelectorAll(".editButton").forEach((element)=>{
 	element.addEventListener("click",(event)=>{

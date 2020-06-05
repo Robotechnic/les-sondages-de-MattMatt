@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Les sondages de MattMatt - Génération de lien</title>
+	<%- include ("parts/include.ejs") %>
+</head>
+<body>
+	<%- include ("parts/header.ejs") %>
+	
+	<section class="form-contener">
+		<form class="form-contener__form">
+			
+			<input type="submit" name="submit" value="créer">
+		</form>
+	</section>
+
+	<%- include ("parts/footer.ejs") %>
+	<!-- Error script-->
+	<script type="text/javascript"> 
+		<% if (locals.error) {%>
+			alert("<%=error%>")
+		<% } %>
+	</script>
+</body>
+</html>
