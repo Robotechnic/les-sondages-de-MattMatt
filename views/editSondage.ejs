@@ -39,26 +39,26 @@
 						
 						<h3 class="presentationComponent__title"><%=question.question%></h3>
 						<div class="presentationComponent__content-extended">
-							<ol class="presentationComponent__content__list">
+							<ol class="presentationComponent__content__list" id="list.<%=question.id%>">
 								<% var temp = JSON.parse(question.choix)
 								temp.forEach((choix,indexChoix)=>{%>
-									<li class="presentationComponent__content__list__question-element">
+									<li class="presentationComponent__content__list__question-element" id="choix.<%=question.id%>.<%=indexChoix%>">
 										<div 
 										class="presentationComponent__content__list__question-element__contener"
 										id="<%=question.id%>.<%=indexChoix%>.<%=token%>">
-											<label For="responseFor<%=question.id%>_<%=indexChoix%>">
+											<label For="">
 											<input 
 												type="text" 
-												name="textValue<%=question.id%>_<%=indexChoix%>"
+												name="textValue.<%=question.id%>.<%=indexChoix%>"
 												value="<%=choix%>">
 											</label>
 										</div>
 									</li>
 								<%})%>
 							</ol>
-							<a class="presentationComponent__content-extended__addChoiceButton" href="/gestion/edit/<%=data.id%>/<%=question.id%>/addChoice?token=<%=token%>">
+							<button class="presentationComponent__content-extended__addChoiceButton" name="<%=data.id%>.<%=question.id%>.<%=token%>">
 								<img src="/images/add.png">
-							</a>
+							</button>
 						</div>
 					</div>
 			<%	})
@@ -68,7 +68,7 @@
 			+
 		</button>
 		<form class="form-contener__form" id="newQuestion" method="POST" action="/gestion/addQuestion/<%=data.id%>?token=<%=token%>">
-			<h3>Nouveau sondage</h3>
+			<h3>Nouvelle question</h3>
 			<label For="title">Titre</label>
 			<input 	type="text"
 					name="title" 
@@ -80,7 +80,6 @@
 					placeholder="Titre"
 			>
 			<div class="instruction-contener">
-				<label class="instruction-contener__instruction" id="titleValidator">Le titre est disponible</label>
 				<label class="instruction-contener__instruction" id="titleLengthValidator">Le titre fait au moins 4 caractères<br/> mais moins de 30 caractéres</label>
 			</div>
 			<input type="button" name="cancel" id="cancel" value="Annuler">
@@ -126,7 +125,6 @@
 	<%- include ("parts/footer.ejs") %>
 
 	<script type="text/javascript" src="/js/editSondage.js"></script>
-	<script type="text/javascript" src="/js/createSondage.js"></script>
 	<!-- Error script-->
 	<script type="text/javascript"> 
 		<% if (locals.error) {%>

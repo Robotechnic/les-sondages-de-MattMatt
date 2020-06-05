@@ -48,7 +48,7 @@ titleInput.addEventListener("input", ()=>{
 		titleValidator.classList.add("loading")
 		titleHttpRequest.send(null)
 	}
-	if (title.length > 4 && title.length < 31){
+	if (title.length > 3 && title.length < 31){
 		titleLengthValidator.classList.add('valide')
 	}
 	else{

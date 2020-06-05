@@ -88,47 +88,6 @@ module.exports = (db) =>{
 			}
 	})
 
-	router.get("/edit/:id/:idQuestion/delChoice/:indexChoice",(req,res)=>{
-		if (req.session.connected){
-			if (req.session.tempToken == req.query.token){
-				if (req.params.id.match(idPatern) && req.params.idQuestion.match(idPatern)){
-						isOwner(req.session.userId,req.params.id,(owner,sondageData)=>{
-							if (owner){
-								let query = "SELECT choix FROM questions WHERE id=? AND idSondage=?"
-								db.get(query,[req.params.idQuestion,req.params.id],(err,row)=>{
-									if (err)
-										throw err
-									if (row){
-										var data = JSON.parse(row.choix)
-										//console.log(typeof data)
-										//console.log(data)
-										data.splice(req.params.indexChoice,1)
-										let query = "UPDATE questions SET choix=? WHERE id=? AND idSondage=?"
-										db.run(query,[JSON.stringify(data),req.params.idQuestion,req.params.id],(err)=>{
-											if (err)
-												throw err
-											res.send([true,"",req.params.indexChoice])
-										})
-									} else {
-										res.send([false,"sondage or question doesn't exist",0])
-									}
-									
-								})
-							} else {
-								res.send([false,"not owner",0])
-							}
-						})
-					} else {
-						res.send([false,"wrong id",0])
-					}
-				} else {
-					res.status(498).send([false,"expired token",0])
-				}
-			} else {
-				res.status(401).send([false,"please connect",0])
-			}
-	})
-
 	router.use((req,res,next)=>{//connexion middlware
 		//console.log('connexion middlware')
 		if (req.session.connected){

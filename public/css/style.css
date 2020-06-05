@@ -84,7 +84,7 @@ input[type=checkbox]:checked + label::before {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  padding-right: 25px;
+  padding-right: 55px;
 }
 .presentationComponent__content-extended {
   max-width: 700px;
@@ -729,7 +729,7 @@ h3 {
   position: relative;
 }
 
-.deleteButton, .saveButton, .addButton {
+.deleteButton, .saveButton, .addButton, .upButton, .downButton {
   border: none;
   margin: 1px;
   padding: 1px;
@@ -737,7 +737,7 @@ h3 {
   cursor: pointer;
   font-size: 15px;
 }
-.deleteButton img, .saveButton img, .addButton img {
+.deleteButton img, .saveButton img, .addButton img, .upButton img, .downButton img {
   height: 15px;
   width: 15px;
 }
