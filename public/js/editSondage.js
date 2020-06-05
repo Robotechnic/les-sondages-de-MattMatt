@@ -237,10 +237,7 @@ saveCHoices.addEventListener("readystatechange",(event)=>{
 		console.log(response)
 		if (saveCHoices.status == 200){
 			if (response[0] == true){
-				//console.log(response[2])
-				if (response[2] != undefined)
-					if (response[2] != -1)
-						document.getElementById("question."+response[2]).classList.remove("unsaved")
+				document.getElementById("question."+response[2]).classList.remove("unsaved")
 			} else {
 				alert("Erreur:\nMessage:"+response[1])
 			}
@@ -298,13 +295,59 @@ document.querySelectorAll(".saveButton").forEach((element)=>{
 })
 
 
-document.querySelectorAll(".choicesTextInput").forEach( (element, index) => {
-	console.log(element)
+var idIntervalMap = {}
+
+
+document.querySelectorAll(".presentationComponent").forEach( (element, index) => {
+	//console.log(element)
 	element.addEventListener("input",(event)=>{
-		console.log('change')
+		var sender = event.target
+
+		//get original sender
+		while (! sender.classList.contains("presentationComponent")) {
+			sender = sender.parentNode
+			//console.log(sender)
+		}
+
+		var questionId = sender.id.split(".")[1]
+		var buttonsList = document.getElementById("list."+questionId)
+		var name = sender.getAttribute("name").split(".")
+		//console.log(name)
+		var id = name[0]
+		var token = name[1]
+
+		var intervalId = idIntervalMap[sender.id]
+		if (intervalId == -1 || intervalId == undefined ){
+			console.log('new interval')
+			idIntervalMap[sender.id] = setTimeout(()=>{
+				saveQuestion(id,questionId,token)
+				idIntervalMap[sender.id] = -1
+			}, 5000);
+		}
 	})
 	element.addEventListener("click",(event)=>{
-		console.log('click')
-		console.log(event.target)
+		var sender = event.target
+
+		//get original sender
+		while (! sender.classList.contains("presentationComponent")) {
+			sender = sender.parentNode
+			//console.log(sender)
+		}
+
+		var questionId = sender.id.split(".")[1]
+		var buttonsList = document.getElementById("list."+questionId)
+		var name = sender.getAttribute("name").split(".")
+		//console.log(name)
+		var id = name[0]
+		var token = name[1]
+
+		var intervalId = idIntervalMap[sender.id]
+		if (intervalId == -1 || intervalId == undefined ){
+			console.log('new interval')
+			idIntervalMap[sender.id] = setTimeout(()=>{
+				saveQuestion(id,questionId,token)
+				idIntervalMap[sender.id] = -1
+			}, 5000);
+		}
 	})
 })

@@ -90,7 +90,7 @@ module.exports = (db) =>{
 												return
 											}
 
-											console.log(data)
+											//console.log(data)
 											//update data base
 											let query = "UPDATE questions SET choix=?, type=? WHERE id=? AND idSondage=?"
 											db.run(query,[JSON.stringify(data),questionType,req.params.idQuestion,req.params.id],(err)=>{
@@ -99,7 +99,7 @@ module.exports = (db) =>{
 												res.send([true,"",req.params.idQuestion])
 											})
 										} else {
-											res.send([true,"",-1])
+											res.send([true,"",req.params.idQuestion])
 										}
 									} else {
 										res.send([false,"sondage or question doesn't exist"])

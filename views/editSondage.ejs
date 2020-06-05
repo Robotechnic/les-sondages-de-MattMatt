@@ -20,7 +20,7 @@
 		<nav class="form-contener__form" method="POST" action="">
 			<% if (locals.questions) {
 				questions.forEach((question,index)=>{%>
-					<div class="presentationComponent" id="question.<%=question.id%>">
+					<div class="presentationComponent" id="question.<%=question.id%>" name="<%=data.id%>.<%=token%>">
 						<nav class="presentationComponent__toolBar" id="toolbar.<%=index%>">
 							<input
 								type="checkbox" 
@@ -80,12 +80,12 @@
 					id="title" 
 					required 
 					minlength="4" 
-					maxlength="30"
+					maxlength="50"
 					autofocus
 					placeholder="Titre"
 			>
 			<div class="instruction-contener">
-				<label class="instruction-contener__instruction" id="titleLengthValidator">Le titre fait au moins 4 caractères<br/> mais moins de 30 caractéres</label>
+				<label class="instruction-contener__instruction" id="titleLengthValidator">Le titre fait au moins 4 caractères<br/> mais moins de 50 caractéres</label>
 			</div>
 			<input type="button" name="cancel" id="cancel" value="Annuler">
 			<input type="submit" name="submit" value="Ajouter">

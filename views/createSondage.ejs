@@ -15,14 +15,14 @@
 					id="title" 
 					required 
 					minlength="4" 
-					maxlength="30"
+					maxlength="50"
 					autofocus
 					placeholder="Titre"
 					value="<%if(locals.title){%><%=title%><%}%>" 
 			>
 			<div class="instruction-contener">
 				<label class="instruction-contener__instruction" id="titleValidator">Le titre est disponible</label>
-				<label class="instruction-contener__instruction" id="titleLengthValidator">Le titre fait au moins 4 caractères<br/> mais moins de 30 caractéres</label>
+				<label class="instruction-contener__instruction" id="titleLengthValidator">Le titre fait au moins 4 caractères<br/> mais moins de 50 caractéres</label>
 			</div>
 			<label For="description">Description:</label>
 			<textarea id="description"  placeholder="Description" name="description"><%if(locals.description){%><%=description%><%}%></textarea>
