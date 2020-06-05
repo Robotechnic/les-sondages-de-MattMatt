@@ -136,5 +136,20 @@
 			alert("<%=error%>")
 		<% } %>
 	</script>
+	<script>
+		window.onbeforeunload = (e) => {
+			if (document.querySelectorAll(".unsaved").length>0){
+				 e = e || window.event;
+
+			    // For IE and Firefox prior to version 4
+			    if (e) {
+			        e.returnValue = 'Des données von êtres perdues si vous contnuez.\nÊtes vous sur de vouloir continuer?'
+			    }
+
+			    // For Safari
+			    return 'Des données von êtres perdues si vous contnuez.\nÊtes vous sur de vouloir continuer?'
+			}
+		}
+	</script>
 </body>
 </html>

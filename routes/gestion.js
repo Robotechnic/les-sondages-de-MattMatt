@@ -150,7 +150,7 @@ module.exports = (db) =>{
 		var body = req.body
 		body.description = escape(body.description) || "Aucune description"
 
-		if (body.title.length < 4 || body.title.length > 30){
+		if (body.title.length < 4 || body.title.length > 50){
 			res.render("createSondage.ejs",
 					{connected:req.session.connected || false,
 						title:body.title,description:body.description,
@@ -272,7 +272,7 @@ module.exports = (db) =>{
 
 	router.post("/addQuestion/:id",(req,res) => {
 		if (req.params.id.match(idPatern)){
-			if (req.body.title.length < 4 || req.body.title.length > 30){
+			if (req.body.title.length < 4 || req.body.title.length > 50){
 				res.redirect("/gestion/edit/"+req.params.id+"?error="+encodeURI("Le titre ne fait pas la bonne longueur."))
 			}else{
 				let query = "INSERT INTO questions (idSondage,question) VALUES (?,?)"

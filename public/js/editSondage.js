@@ -18,7 +18,7 @@ document.getElementById("cancel").addEventListener("click",(event)=>{
 document.getElementById("newQuestion").addEventListener("submit", (event)=>{
 	var title = event.target.title.value
 	console.log(title)
-	if (title.length < 4 || title.length > 30)
+	if (title.length < 4 || title.length > 51)
 	{
 		alert("Le titre ne fait pas la bonne longueur.")
 		event.preventDefault();
@@ -32,7 +32,7 @@ titleInput.addEventListener("input", ()=>{
 	//send a request to the server
 	var title = titleInput.value
 
-	if (title.length > 3 && title.length < 31){
+	if (title.length > 3 && title.length < 51){
 		titleLengthValidator.classList.add('valide')
 	}
 	else{
@@ -294,5 +294,17 @@ document.querySelectorAll(".saveButton").forEach((element)=>{
 
 		//save
 		saveQuestion(id,questionId,token)
+	})
+})
+
+
+document.querySelectorAll(".choicesTextInput").forEach( (element, index) => {
+	console.log(element)
+	element.addEventListener("input",(event)=>{
+		console.log('change')
+	})
+	element.addEventListener("click",(event)=>{
+		console.log('click')
+		console.log(event.target)
 	})
 })
