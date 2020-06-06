@@ -309,6 +309,8 @@ document.querySelectorAll(".presentationComponent").forEach( (element, index) =>
 			//console.log(sender)
 		}
 
+		sender.classList.add("unsaved")
+
 		var questionId = sender.id.split(".")[1]
 		var buttonsList = document.getElementById("list."+questionId)
 		var name = sender.getAttribute("name").split(".")
@@ -333,6 +335,8 @@ document.querySelectorAll(".presentationComponent").forEach( (element, index) =>
 			sender = sender.parentNode
 			//console.log(sender)
 		}
+
+		sender.classList.add("unsaved")
 
 		var questionId = sender.id.split(".")[1]
 		var buttonsList = document.getElementById("list."+questionId)

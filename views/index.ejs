@@ -155,6 +155,12 @@
 			</blockquote>
 		</div>
 	</section>
+	<!-- Error script-->
+	<script type="text/javascript"> 
+		<% if (locals.error) {%>
+			alert("<%=error%>")
+		<% } %>
+	</script>
 	<%- include ("parts/footer.ejs") %>
 </body>
 </html>

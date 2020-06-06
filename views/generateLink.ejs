@@ -7,15 +7,36 @@
 </head>
 <body>
 	<%- include ("parts/header.ejs") %>
-	
+	<h2>Lien pour : <%=data.title%></h2>
 	<section class="form-contener">
-		<form class="form-contener__form">
-			
-			<input type="submit" name="submit" value="créer">
+		<form class="form-contener__form" method="POST" action="#" id="timeForm">
+			<label>Validité du lien:</label>
+			<label>Pendant:</label>
+			<input type="checkbox" name="forever" id="forever">
+			<label For="forever">Pour toujours</label>
+			<div id="timeContener" disabled>
+				<input type="number" name="day" id="day" min="0" value="7">
+				<label For="day">Jours</label>
+				<input type="number" name="hours" id="hours" min="0" max="59" value="0">
+				<label For="hours">Heures</label>
+				<input type="number" name="minutes" id="minutes" min="0" max="59" value="0">
+				<label For="minutes">Minutes</label>
+			</div>
+			<input type="hidden" name="idSondage" value="<%=data.id%>">
+			<input type="submit" name="submit" value="Générer">
+		</form>
+		<form class="form-contener__form" id="wait">
+			<img src="/images/pulse.gif">
+			<input type="button" name="cancel" id="cancelButton" value="Annuler">
+		</form>
+		<form class="form-contener__form" id="displayLink">
+			<input type="text" name="generatedLink" id="generatedLink">
+			<input type="button" name="rewind" id="rewind" value="Recommencer">
 		</form>
 	</section>
 
 	<%- include ("parts/footer.ejs") %>
+	<script type="text/javascript" src="/js/generateLink.js"></script>
 	<!-- Error script-->
 	<script type="text/javascript"> 
 		<% if (locals.error) {%>

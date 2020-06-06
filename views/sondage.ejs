@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Les sondages de MattMatt - Répondre a un sondage</title>
+	<%- include ("parts/include.ejs") %>
+</head>
+<body>
+	<%- include ("parts/header.ejs") %>
+	<section class="sondage-header">
+		<div class="sondage-header__info-contener">
+			<div class="sondage-header__info-contener__password">
+				Mot de passe: <% if (data.passwordNeeded) {%>oui<%} else {%>non<%}%>
+				</div>
+			<div class="sondage-header__info-contener__date"><%=data.creationDate%></div>
+		</div>
+		<h2 class="sondage-header__title"><%=data.title%></h2>
+		<p class="sondage-header__description"><%-data.description.replace(/\n/g,"<br/>")%></p>
+	</section>
+	<section class="form-contener-column sondageContener">
+		<nav class="form-contener__form" method="POST" action="">
+			<% if (locals.questions) {
+				questions.forEach((question,index)=>{%>
+				<div class="presentationComponent" id="question.<%=question.id%>" name="<%=data.id%>">
+					<h3 class="presentationComponent__title"><%=question.question%></h3>
+					<div class="presentationComponent__content-extended">
+						<ol class="presentationComponent__content__list" id="list.<%=question.id%>">
+							<% var temp = JSON.parse(question.choix)
+							temp.forEach((choix,indexChoix)=>{%>
+								<li class="presentationComponent__content__list__question-element" id="choix.<%=question.id%>.<%=indexChoix%>">
+									<% switch(question.type) {
+
+										case "single":
+											%>
+											<input 	type="radio" 
+													name="responseFor.<%=question.id%>" 
+													required 
+													id="responseFor.<%=question.id%>.<%=indexChoix%>">
+											<%
+											break
+										case "multiple":
+											%>
+											<input 	type="checkbox"
+													name="responseFor.<%=question.id%>"
+													id="responseFor.<%=question.id%>.<%=indexChoix%>"
+													class="normal">
+											<%
+											break
+									}%>
+									<label For="responseFor.<%=question.id%>.<%=indexChoix%>">
+										<%=choix%>
+									</label>
+								</li>
+							<%})%>
+						</ol>
+					</div>
+				</div>
+			<%	})
+			}%>
+		</nav>
+		
+	</section>
+	
+	<%- include ("parts/footer.ejs") %>
+
+	<!-- Error script-->
+	<script type="text/javascript"> 
+		<% if (locals.error) {%>
+			alert("<%=error%>")
+		<% } %>
+	</script>
+</body>
+</html>

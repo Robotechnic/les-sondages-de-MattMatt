@@ -68,7 +68,7 @@ module.exports = (db) =>{
 											var questionType = questionType ? "multiple" : "single"
 										} catch(e) {
 											//console.log("Données invalides")
-											res.send([false,"Données invalides"])
+											res.status(400).send([false,"Données invalides"])
 											return
 										}
 										
@@ -80,13 +80,13 @@ module.exports = (db) =>{
 												if(data.filter((element)=>{
 													return typeof element != "string"
 												}).length > 0){
-													res.send([false,"Données invalides"])
+													res.status(400).send([false,"Données invalides"])
 													return
 												}
 											} catch(e) {
 												// data are invalid = error
 												//console.log("Données invalides")
-												res.send([false,"Données invalides"])
+												res.status(400).send([false,"Données invalides"])
 												return
 											}
 
@@ -102,16 +102,16 @@ module.exports = (db) =>{
 											res.send([true,"",req.params.idQuestion])
 										}
 									} else {
-										res.send([false,"sondage or question doesn't exist"])
+										res.send(404).send([false,"sondage or question doesn't exist"])
 									}
 									
 								})
 							} else {
-								res.send([false,"not owner"])
+								res.status(403).send([false,"not owner"])
 							}
 						})
 					} else {
-						res.send([false,"wrong id"])
+						res.status(400).send([false,"wrong id"])
 					}
 				} else {
 					res.status(498).send([false,"expired token"])
@@ -240,15 +240,24 @@ module.exports = (db) =>{
 
 	router.post("/edit/password/:id",(req,res)=>{
 		if (req.params.id.match(idPatern)){
-			if (req.body.password.match(passwordValidator)){
-				let query = "UPDATE sondages SET password=? WHERE id=? AND userId=?"
-				db.run(query,[req.body.password,req.params.id,req.session.userId],(err)=>{
+			let query = "UPDATE sondages SET  passwordNeeded=?, password=? WHERE id=? AND userId=?"
+			console.log(req.body)
+			if (req.body.passwordCheckBox == "on"){
+				if (req.body.password.match(passwordValidator)){
+					db.run(query,[1,req.body.password,req.params.id,req.session.userId],(err)=>{
+						if (err)
+							throw err
+						res.redirect("/gestion/edit/"+req.params.id)
+					})
+				} else {
+					res.redirect("/gestion/edit/"+req.params.id+"?error="+encodeURI("Le mot de passe ne correspond pas a la politique de sécurité des Sondages de MattMatt.")+"#editParams")
+				}
+			} else {
+				db.run(query,[0,"",req.params.id,req.session.userId],(err)=>{
 					if (err)
 						throw err
 					res.redirect("/gestion/edit/"+req.params.id)
 				})
-			} else {
-				res.redirect("/gestion/edit/"+req.params.id+"?error="+encodeURI("Le mot de passe ne correspond pas a la politique de sécurité des Sondages de MattMatt.")+"#editParams")
 			}
 		} else {
 			res.redirect("/gestion/")

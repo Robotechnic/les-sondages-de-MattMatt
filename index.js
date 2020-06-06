@@ -66,7 +66,7 @@ const users = require("./routes/users")(db)
 
 app.get("",(req,res)=>{
 	console.log(req.headers.host)//,req.session)
-	res.render("index.ejs",{connected:req.session.connected || false})
+	res.render("index.ejs",{connected:req.session.connected || false,error:req.query.error})
 })
 
 app.use("/gestion",admin)

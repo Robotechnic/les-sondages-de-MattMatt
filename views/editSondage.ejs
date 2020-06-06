@@ -9,7 +9,7 @@
 	<%- include ("parts/header.ejs") %>
 	<section class="sondage-header">
 		<div class="sondage-header__info-contener">
-			<% if (data.password) {%><div class="sondage-header__info-contener__password">Mot de passe: <%=data.password%></div><%}%>
+			<% if (data.passwordNeeded) {%><div class="sondage-header__info-contener__password">Mot de passe: <%=data.password%></div><%}%>
 			<div class="sondage-header__info-contener__date"><%=data.creationDate%></div>
 		</div>
 		<h2 class="sondage-header__title"><%=data.title%></h2>
@@ -130,6 +130,7 @@
 	<%- include ("parts/footer.ejs") %>
 
 	<script type="text/javascript" src="/js/editSondage.js"></script>
+	<script type="text/javascript" src="/js/createSondage.js"></script>
 	<!-- Error script-->
 	<script type="text/javascript"> 
 		<% if (locals.error) {%>
