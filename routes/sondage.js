@@ -30,86 +30,6 @@ module.exports = (db) =>{
 		})
 	}
 
-	router.get("/:token",(req,res)=>{
-		token.verify(req.params.token,tokenSecret,(err,decoded)=>{
-			if (err)
-			{
-				console.log('err')
-				res.redirect("../../../?error="+encodeURI("Le lien est invalide"))
-			} else {
-				let query = "SELECT *,strftime('Créé le %d/%m/%Y à %H:%M:%S', creationDate) AS creationDate FROM sondages WHERE id=?"
-
-				db.get(query,[decoded.sondageId],(err,row)=>{
-					if (err)
-						throw err
-					if (row){
-						if (row.passwordNeeded){
-							if (req.session.sondageAccess){
-								if (req.session.sondageAccess.includes(decoded.sondageId)){
-									let query = "SELECT * FROM questions WHERE idSondage=?"
-									db.all(query,[row.id],(err,questions)=>{
-										res.render("sondage.ejs",{connected:req.session.connected || false,data:row,questions:questions})
-									})
-								} else {
-									res.render("passwordSondage.ejs",{connected:req.session.connected || false,error:req.query.error})
-								}
-							} else {
-								res.render("passwordSondage.ejs",{connected:req.session.connected || false,error:req.query.error})								
-							}
-						} else {
-							let query = "SELECT * FROM questions WHERE idSondage=?"
-							db.all(query,[row.id],(err,questions)=>{
-								res.render("sondage.ejs",{connected:req.session.connected || false,data:row,questions:questions})
-							})
-						}
-					} else {
-						res.redirect("../../../?error="+encodeURI("Le sondage n'existe pas"))
-					}
-				})
-				//
-			}
-		})
-	})
-
-	router.post("/:token",(req,res)=>{
-		token.verify(req.params.token,tokenSecret,(err,decoded)=>{
-			if (err)
-			{
-				console.log('err')
-				res.redirect("../../../?error="+encodeURI("Le lien est invalide"))
-			} else {
-				let query = "SELECT passwordNeeded, password FROM sondages WHERE id=?"
-
-				db.get(query,[decoded.sondageId],(err,row)=>{
-					if (err)
-						throw err
-					if (row){
-						console.log(row)
-						if (row.passwordNeeded){
-							if (row.password == req.body.password){
-								if(req.session.sondageAccess){
-									if (!req.session.sondageAccess.includes(decoded.sondageId))
-										req.session.sondageAccess.push(decoded.sondageId)
-								} else {
-									req.session.sondageAccess = [decoded.sondageId]
-								}
-								res.redirect("/sondage/"+req.params.token)
-							} else {
-								res.redirect("/sondage/"+req.params.token+"?error="+encodeURI("Le mo de passe est incorect"))
-							}
-						} else {
-							res.redirect("/sondage/"+req.params.token)
-						}
-					} else {
-						res.redirect("../../../?error="+encodeURI("Le sondage n'existe pas"))
-					}
-				})
-				//
-			}
-		})
-	})
-
-	
 	router.get("/generateLink/:idSondage",(req,res)=>{
 		if (req.session.connected)
 			if (req.params.idSondage.match(idPatern))
@@ -166,6 +86,110 @@ module.exports = (db) =>{
 				res.status(400).send("The id has not the right format")
 		else
 			res.status(401).send("You are not connected")
+	})
+
+
+	router.get("/:token",(req,res)=>{
+		token.verify(req.params.token,tokenSecret,(err,decoded)=>{
+			
+			if (err)
+			{
+				console.log('err')
+				res.redirect("../../../?error="+encodeURI("Le lien est invalide"))
+			} else {
+				let query = "SELECT *,strftime('Créé le %d/%m/%Y à %H:%M:%S', creationDate) AS creationDate FROM sondages WHERE id=?"
+
+				db.get(query,[decoded.sondageId],(err,row)=>{
+					if (err)
+						throw err
+					if (row){
+						if (row.passwordNeeded){
+							if (req.session.sondageAccess){
+								if (req.session.sondageAccess.includes(decoded.sondageId)){
+									let query = "SELECT * FROM questions WHERE idSondage=?"
+									db.all(query,[row.id],(err,questions)=>{
+										res.render("sondage.ejs",{connected:req.session.connected || false,data:row,questions:questions,token:req.params.token})
+									})
+								} else {
+									res.render("passwordSondage.ejs",{connected:req.session.connected || false,error:req.query.error})
+								}
+							} else {
+								res.render("passwordSondage.ejs",{connected:req.session.connected || false,error:req.query.error})								
+							}
+						} else {
+							let query = "SELECT * FROM questions WHERE idSondage=?"
+							db.all(query,[row.id],(err,questions)=>{
+								res.render("sondage.ejs",{connected:req.session.connected || false,data:row,questions:questions,token:req.params.token})
+							})
+						}
+					} else {
+						res.redirect("../../../?error="+encodeURI("Le sondage n'existe pas"))
+					}
+				})
+			}
+		})
+	})
+
+	router.post("/:token",(req,res)=>{
+		token.verify(req.params.token,tokenSecret,(err,decoded)=>{
+			if (err)
+			{
+				console.log('err')
+				res.redirect("../../../?error="+encodeURI("Le lien est invalide"))
+			} else {
+				let query = "SELECT passwordNeeded, password FROM sondages WHERE id=?"
+
+				db.get(query,[decoded.sondageId],(err,row)=>{
+					if (err)
+						throw err
+					if (row){
+						console.log(row)
+						if (row.passwordNeeded){
+							if (row.password == req.body.password){
+								if(req.session.sondageAccess){
+									if (!req.session.sondageAccess.includes(decoded.sondageId))
+										req.session.sondageAccess.push(decoded.sondageId)
+								} else {
+									req.session.sondageAccess = [decoded.sondageId]
+								}
+								res.redirect("/sondage/"+req.params.token)
+							} else {
+								res.redirect("/sondage/"+req.params.token+"?error="+encodeURI("Le mo de passe est incorect"))
+							}
+						} else {
+							res.redirect("/sondage/"+req.params.token)
+						}
+					} else {
+						res.redirect("../../../?error="+encodeURI("Le sondage n'existe pas"))
+					}
+				})
+			}
+		})
+	})
+
+
+	router.post("/response/:token",(req,res)=>{
+		token.verify(req.params.token,tokenSecret,(err,decoded)=>{
+			
+			if (err)
+			{
+				console.log('err')
+				res.redirect("../../../?error="+encodeURI("Le lien est invalide"))
+			} else {
+				let query = "SELECT *,strftime('Créé le %d/%m/%Y à %H:%M:%S', creationDate) AS creationDate FROM sondages WHERE id=?"
+
+				db.get(query,[decoded.sondageId],(err,row)=>{
+					if (err)
+						throw err
+					if (row){
+						console.log('Réponse:',req.body)
+						res.send(req.body)
+					} else {
+						res.redirect("../../../?error="+encodeURI("Le sondage n'existe pas"))
+					}
+				})
+			}
+		})
 	})
 	return router
 }

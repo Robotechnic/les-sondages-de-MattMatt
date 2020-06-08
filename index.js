@@ -78,6 +78,14 @@ app.use((app,res,next)=>{
 	res.setHeader('Content-Type', 'text/plain');
     res.status(404).send('Page introuvable !');
 })
+
+
 server.listen(port,()=>{
 	console.log("le serveur écoute sur",port)
 })
+
+// db.all("SELECT id FROM sondages",[],(err,row)=> {
+// 	if (err)
+// 		throw err
+// 	console.log(row)
+// })

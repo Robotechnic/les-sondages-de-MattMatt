@@ -10,4 +10,7 @@ form{
 	>*{
 		margin: 2px;
 	}
+	&.noBackground{
+		background-color:transparent;
+	}
 }
