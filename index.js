@@ -61,7 +61,7 @@ if (sessionSecret == "aRandomSecretThatMustBeChanged3141592"){
 
 //setup routes
 const admin = require("./routes/gestion")(db)
-const sondage = require("./routes/sondage")(db)
+const sondage = require("./routes/sondage")(db,io)
 const users = require("./routes/users")(db)
 
 app.get("",(req,res)=>{

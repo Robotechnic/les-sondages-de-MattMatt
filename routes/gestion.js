@@ -204,7 +204,7 @@ module.exports = (db) =>{
 				{
 					res.redirect("/gestion/?error="+publishedError)
 				} else {
-					let query = "SELECT * FROM questions WHERE idSondage=?"
+					let query = "SELECT * FROM questions WHERE sondageId=?"
 					db.all(query,[req.params.id],(err,questionsRow)=>{
 						if (err)
 							throw err

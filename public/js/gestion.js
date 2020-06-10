@@ -1,6 +1,8 @@
 /*
 	ALERT FOR ALL BUTTONS
 */
+// there link was coded with javascript because the user must have javascript to access to all of this pages
+// or the link need a confirm dialog box
 
 //delete buttons
 document.querySelectorAll(".deleteButton").forEach((element)=>{
@@ -46,5 +48,14 @@ document.querySelectorAll(".publishButton").forEach((element)=>{
 		var token = sender.id.split(".")[2]
 		if (confirm("Attention, la publication d'un sondage le rend impossible a modifier.\nÊtes vous sur de vouloir continuer ?\nCette action est irréversible."))
 			window.location = String(window.location.origin)+"/gestion/publish/"+id+"?token="+token
+	})
+})
+
+//responses buttons
+document.querySelectorAll(".seeResponsesButton").forEach((element)=>{
+	element.addEventListener("click",(event)=>{
+		let sender = event.target
+		var id = sender.id.split(".")[1]
+		window.location = String(window.location.origin)+"/sondage/view/"+id
 	})
 })

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Les sondages de MattMatt - Voir les résultats</title>
+	<%- include ("parts/include.ejs") %>
+</head>
+<body>
+	<%- include ("parts/header.ejs") %>
+	<section class="sondage-header">
+		<div class="sondage-header__info-contener">
+			<div class="sondage-header__info-contener__password">
+				Mot de passe: <% if (data.passwordNeeded) {%>oui<%} else {%>non<%}%>
+				</div>
+			<div class="sondage-header__info-contener__date"><%=data.creationDate%></div>
+		</div>
+		<h2 class="sondage-header__title"><%=data.title%></h2>
+		<p class="sondage-header__description"><%-data.description.replace(/\n/g,"<br/>")%></p>
+	</section>
+	<section class="form-contener-column sondageContener">
+		<nav class="form-contener__form noBackground">
+			<% if (locals.questions) {
+				questions.forEach((question,index)=>{%>
+				<div class="presentationComponent" id="question.<%=question.id%>" name="<%=data.id%>">
+					<h3 class="presentationComponent__title"><%=question.question%></h3>
+					<div class="presentationComponent__content-extended">
+						<ol class="presentationComponent__content__list" id="list.<%=question.id%>">
+							<% var temp = JSON.parse(question.choix)
+								if (question.data){
+									var responseObject = JSON.parse(question.data)
+								} else {
+									var responseObject = {}
+								}
+							temp.forEach((choix,indexChoix)=>{%>
+								<li class="presentationComponent__content__list__question-element" id="choix.<%=question.id%>.<%=indexChoix%>">
+									<div class="presentationComponent__content__list__question-element__contener">
+										<label For="responseFor.<%=data.id%>.<%=question.id%>.<%=indexChoix%>">
+										<%=choix%>
+										</label>
+										<div class="percentagePresentation">
+											<%
+												var percent = (responseObject[String(indexChoix)]/data.responses*100) || 0
+												percent = percent.toFixed(3)
+
+											%>
+											
+											<progress value="<%=percent%>" max="100" class="percentagePresentation__progress"></progress>
+											<p class="percentagePresentation__text"><%=percent%>% 
+											(<%=responseObject[String(indexChoix)] || 0%>/<%=data.responses%>)
+											</p>
+										</div>
+									</div>
+								</li>
+							<%})%>
+						</ol>
+					</div>
+				</div>
+			<%	})
+			}%>
+		</nav>
+		
+	</section>
+	
+	<%- include ("parts/footer.ejs") %>
+
+	<!-- Error script-->
+	<script type="text/javascript"> 
+		<% if (locals.error) {%>
+			alert("<%=error%>")
+		<% } %>
+	</script>
+</body>
+</html>

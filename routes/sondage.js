@@ -19,7 +19,7 @@ if (tokenSecret == "LeSondagesDeMattMattSignatureSecrète274684568412é787\"45\"
 }
 
 
-module.exports = (db) =>{
+module.exports = (db,io) =>{
 
 	isOwner = (userId,sondageId,callback) =>{ //verify if user is the owner of a sondage
 		let sqlQuerry = "SELECT *,strftime('Créé le %d/%m/%Y à %H:%M:%S', creationDate) AS creationDate FROM sondages WHERE id=? AND userId=?"
@@ -114,7 +114,7 @@ module.exports = (db) =>{
 						if (row.passwordNeeded){
 							if (req.session.sondageAccess){
 								if (req.session.sondageAccess.includes(decoded.sondageId)){
-									let query = "SELECT * FROM questions WHERE idSondage=?"
+									let query = "SELECT * FROM questions WHERE sondageId=?"
 									db.all(query,[row.id],(err,questions)=>{
 										res.render("sondage.ejs",{connected:req.session.connected || false,data:row,questions:questions,token:req.params.token})
 									})
@@ -125,7 +125,7 @@ module.exports = (db) =>{
 								res.render("passwordSondage.ejs",{connected:req.session.connected || false,error:req.query.error})								
 							}
 						} else {
-							let query = "SELECT * FROM questions WHERE idSondage=?"
+							let query = "SELECT * FROM questions WHERE sondageId=?"
 							db.all(query,[row.id],(err,questions)=>{
 								res.render("sondage.ejs",{connected:req.session.connected || false,data:row,questions:questions,token:req.params.token})
 							})
@@ -175,6 +175,27 @@ module.exports = (db) =>{
 		})
 	})
 
+	router.get("/view/:id",(req,res)=>{
+		if (req.session.connected)
+			if (req.params.id.match(idPatern))
+				isOwner(req.session.userId,req.params.id,(owner,sondageRow)=>{
+					if (owner){
+						let questionQuery = "SELECT * FROM questions LEFT JOIN responses ON responses.questionId=questions.id WHERE questions.sondageId=?"
+						db.all(questionQuery,[req.params.id],(err,row)=>{
+							if (err)
+								console.log(err)
+							console.log(row)
+							res.render("responses.ejs",{connected:req.session.connected || false,data:sondageRow,questions:row})
+						})
+					} else
+						res.redirect("/gestion/")
+				})
+			else
+				res.redirect("/gestion/")
+		else
+			res.redirect("/users/logIn")
+	})
+
 	var keyValidator = /responseFor.([0-9]{1,}).([0-9]{1,})/
 
 	isEmpty = (obj) => {
@@ -214,6 +235,7 @@ module.exports = (db) =>{
 																																	//DUPLICATE KEY UPDATE data=?
 								for (let [key, value] of Object.entries(req.body)) {
 									let values = key.match(keyValidator)
+									// console.log(values)
 									var data = {}
 
 									if (values){
@@ -221,46 +243,49 @@ module.exports = (db) =>{
 
 											let query = "SELECT * FROM questions WHERE id=?"
 											db.get(query,[values[2]],(err,questionRow)=>{
+												//console.log(questionRow)
 												if (err)
 													throw err
 												if (questionRow)
-													db.get(getresponses,[decoded.sondageId,values[2]],(err,responseRow)=>{
-														//console.log(responsseRow)
+													db.get(getresponses,[decoded.sondageId,questionRow.id],(err,responseRow)=>{
+														//console.log(responseRow)
 														if (responseRow){
-															console.log(responseRow.data)
+															//console.log(responseRow.data)
 															responseRow.data = responseRow.data || "{}"
 															data = JSON.parse(responseRow.data)
-															console.log(responseRow.data,data,JSON.parse(responseRow.data))
-
-															if (typeof value == "string" && questionRow.type == "single"){
-																data[value] = (data[value] || 0)+1
-															} else if (value.constructor == Array && questionRow.type == "multiple"){
-																value.forEach( (element, index) => {
-																	data[element] = (data[element] || 0)+1
-																})
-															}
-															data = JSON.stringify(data)
-															db.run(responsesQuery,[decoded.sondageId,values[2],data],(err)=>{
-																if (err)
-																	throw err
+															//console.log(responseRow.data,data,JSON.parse(responseRow.data))
+														} else {
+															data = {}
+														}
+														if (typeof value == "string" && questionRow.type == "single"){
+															data[value] = (data[value] || 0)+1
+														} else if (value.constructor == Array && questionRow.type == "multiple"){
+															value.forEach( (element, index) => {
+																data[element] = (data[element] || 0)+1
 															})
 														}
+														data = JSON.stringify(data)
+														db.run(responsesQuery,[decoded.sondageId,values[2],data],(err)=>{
+															if (err)
+																throw err
+														})
 														//console.log(key,value,data)
 													})
 											})
 										}
 									}
-									console.log(values)
-									console.log(`${key}: ${value} ${value.constructor == Array}`);
+									//console.log(values)
+									//console.log(`${key}: ${value} ${value.constructor == Array}`);
 								}
 								//throw bidule //generate error for test
+								console.log('Commit changes')
 								db.run("COMMIT")
 							} catch(e) {
 								console.log("Erreur rencotrée:",e);
 								db.run("ROLLBACK")
 							}
 							//req.body.row = row
-							res.send(req.body)
+							res.redirect("../../?error="+encodeURI("Votre participation a bien étée prise en compte"))
 						} else {
 							res.redirect("../../../?error="+encodeURI("Le sondage n'existe pas"))
 						}
@@ -269,5 +294,6 @@ module.exports = (db) =>{
 			}
 		})
 	})
+
 	return router
 }
