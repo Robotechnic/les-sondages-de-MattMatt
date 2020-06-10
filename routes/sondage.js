@@ -250,13 +250,14 @@ module.exports = (db) =>{
 											})
 										}
 									}
-									//console.log(values)
-									//console.log(`${key}: ${value} ${value.constructor == Array}`);
-									db.run("COMMIT")
+									console.log(values)
+									console.log(`${key}: ${value} ${value.constructor == Array}`);
 								}
+								//throw bidule //generate error for test
+								db.run("COMMIT")
 							} catch(e) {
 								console.log("Erreur rencotrée:",e);
-								//db.run("ROLLBACK")
+								db.run("ROLLBACK")
 							}
 							//req.body.row = row
 							res.send(req.body)
