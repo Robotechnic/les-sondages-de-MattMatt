@@ -56,32 +56,36 @@ module.exports = (db) =>{
 			if (req.params.idSondage.match(idPatern))
 				isOwner(req.session.userId,req.params.idSondage,(owner,row)=>{
 					if (owner){
-						//console.log(req.body)
-						if (body.forever == "true"){
-							var expiresIn = 154000000000 //10 000 years
-						} else {
-							var expiresIn = 0
-							if (body.day.match(idPatern)){
-								expiresIn += Number(body.day) * 86400
+						if (row.published){
+							//console.log(req.body)
+							if (body.forever == "true"){
+								var expiresIn = 154000000000 //10 000 years
+							} else {
+								var expiresIn = 0
+								if (body.day.match(idPatern)){
+									expiresIn += Number(body.day) * 86400
+								}
+								//console.log(Number(body.day) * 86400)
+								if (body.hours.match(timePatern)){
+									expiresIn += Number(body.hours) * 3600
+								}
+								//console.log(Number(body.hours) * 3600)
+								if (body.minutes.match(timePatern)){
+									expiresIn += Number(body.minutes) * 60
+								}
 							}
-							//console.log(Number(body.day) * 86400)
-							if (body.hours.match(timePatern)){
-								expiresIn += Number(body.hours) * 3600
-							}
-							//console.log(Number(body.hours) * 3600)
-							if (body.minutes.match(timePatern)){
-								expiresIn += Number(body.minutes) * 60
-							}
-						}
-						console.log(expiresIn)
-						var sondageToken = token.sign({
-							sondageId:row.id,
-							title:row.title,
-							password:row.passwordNeeded,
-							exp: Math.floor(Date.now() / 1000) + expiresIn
-						},tokenSecret)
+							console.log(expiresIn)
+							var sondageToken = token.sign({
+								sondageId:row.id,
+								title:row.title,
+								password:row.passwordNeeded,
+								exp: Math.floor(Date.now() / 1000) + expiresIn
+							},tokenSecret)
 
-						res.send(req.body.location+"/sondage/"+sondageToken)
+							res.send(req.body.location+"/sondage/"+sondageToken)
+						} else {
+							res.status(403).send("The sondage must be published before generate link.")
+						}
 					} else {
 						res.status(403).send("This is not your sondage")
 					}
@@ -191,10 +195,12 @@ module.exports = (db) =>{
 					db.get(query,[decoded.sondageId],(err,sondageRow)=>{ //get sondageData
 						if (err)
 							throw err
-						if (row){ //if sondage exist
-							
+						if (sondageRow){ //if sondage exist
+							db.run("BEGIN TRANSACTION",(err)=>{
+								if (err)
+									throw err
+							})
 							try {// try to update all
-								db.run("BEGIN TRANSACTION")
 								//update response number
 								db.run("UPDATE sondages SET responses = responses + 1 WHERE id=?",[decoded.sondageId],(err)=>{
 									if (err)
@@ -202,9 +208,13 @@ module.exports = (db) =>{
 								})
 
 								//update responses
-								let getResponsses = "SELECT * FROM responsses WHERE sondageId = ?"
+								let getresponses = "SELECT * FROM responses WHERE sondageId = ? AND questionId = ?"
+								let responsesQuery = "INSERT OR REPLACE INTO responses(sondageId,questionId,data) VALUES (?,?,?)"
+																//INSERT INTO responses (sondageId,questionId,data) VALUES (?,?,?) ON CONFLICT(sondageId,questionId) DO UPDATE SET data=?
+																																	//DUPLICATE KEY UPDATE data=?
 								for (let [key, value] of Object.entries(req.body)) {
 									let values = key.match(keyValidator)
+									var data = {}
 
 									if (values){
 										if (values[1] == decoded.sondageId){
@@ -213,39 +223,42 @@ module.exports = (db) =>{
 											db.get(query,[values[2]],(err,questionRow)=>{
 												if (err)
 													throw err
-												if (row)
-													db.get(getResponsses,[decoded.sondageId],(err,responsseRow)=>{
-														if (row){
-															let data = JSON.parse(row.data)
+												if (questionRow)
+													db.get(getresponses,[decoded.sondageId,values[2]],(err,responseRow)=>{
+														//console.log(responsseRow)
+														if (responseRow){
+															console.log(responseRow.data)
+															responseRow.data = responseRow.data || "{}"
+															data = JSON.parse(responseRow.data)
+															console.log(responseRow.data,data,JSON.parse(responseRow.data))
 
-															let query = "UPDATE responsses SET data = ? WHERE sondageId = ?"
-														} else {
-															let query = "INSERT INTO responsses(sondageId,data) VALUES (?,?)"
-															db.run(query,[decoded.sondageId,""],(err)=>{
+															if (typeof value == "string" && questionRow.type == "single"){
+																data[value] = (data[value] || 0)+1
+															} else if (value.constructor == Array && questionRow.type == "multiple"){
+																value.forEach( (element, index) => {
+																	data[element] = (data[element] || 0)+1
+																})
+															}
+															data = JSON.stringify(data)
+															db.run(responsesQuery,[decoded.sondageId,values[2],data],(err)=>{
 																if (err)
 																	throw err
 															})
 														}
+														//console.log(key,value,data)
 													})
 											})
 										}
 									}
 									//console.log(values)
-									console.log(`${key}: ${value} ${value.constructor == Array}`);
+									//console.log(`${key}: ${value} ${value.constructor == Array}`);
+									db.run("COMMIT")
 								}
-								//throw e //generate error for test
-								// if (typeof value == "string" && row.type == "single"){
-
-								// } else if (value.constructor == Array && row.type = "multiple"){
-
-								// }
-								//db.run("COMMIT")
 							} catch(e) {
-								console.log(e);
-								db.run("ROLLBACK")
+								console.log("Erreur rencotrée:",e);
+								//db.run("ROLLBACK")
 							}
-							
-							req.body.row = row
+							//req.body.row = row
 							res.send(req.body)
 						} else {
 							res.redirect("../../../?error="+encodeURI("Le sondage n'existe pas"))
