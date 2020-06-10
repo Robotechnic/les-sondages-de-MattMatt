@@ -35,7 +35,11 @@ module.exports = (db) =>{
 			if (req.params.idSondage.match(idPatern))
 				isOwner(req.session.userId,req.params.idSondage,(owner,row)=>{
 					if (owner){
-						res.render("generateLink.ejs",{connected:req.session.connected || false,data:row})
+						if (row.published){
+							res.render("generateLink.ejs",{connected:req.session.connected || false,data:row})
+						} else {
+							res.redirect("/gestion/?error="+encodeURI("Le sondage n'a pas encore été publié. \\nVeuillez publier le sondage avant de créer le lien."))
+						}
 					} else {
 						res.redirect("/gestion/")
 					}

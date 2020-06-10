@@ -57,55 +57,59 @@ module.exports = (db) =>{
 						//check if the session own this sondage
 						isOwner(req.session.userId,req.params.id,(owner,sondageData)=>{
 							if (owner){
-								//check if question exist and if this sondage own the question
-								let query = "SELECT choix,type FROM questions WHERE id=? AND idSondage=?"
-								db.get(query,[req.params.idQuestion,req.params.id],(err,row)=>{
-									if (err)
-										throw err
-									if (row){
-										try{
-											var questionType = JSON.parse(req.body.multiple)
-											var questionType = questionType ? "multiple" : "single"
-										} catch(e) {
-											//console.log("Données invalides")
-											res.status(400).send([false,"Données invalides"])
-											return
-										}
-										
-										//check if data are changed
-										if (req.body.choices != row.choix || questionType != row.type){
-											//check data types
-											try {
-												var data = JSON.parse(req.body.choices)
-												if(data.filter((element)=>{
-													return typeof element != "string"
-												}).length > 0){
-													res.status(400).send([false,"Données invalides"])
-													return
-												}
+								if (row.published){
+									res.status(403).send([false,"Le sondage a été publié, il ne peut plus être modifié."])
+								} else {
+									//check if question exist and if this sondage own the question
+									let query = "SELECT choix,type FROM questions WHERE id=? AND idSondage=?"
+									db.get(query,[req.params.idQuestion,req.params.id],(err,row)=>{
+										if (err)
+											throw err
+										if (row){
+											try{
+												var questionType = JSON.parse(req.body.multiple)
+												var questionType = questionType ? "multiple" : "single"
 											} catch(e) {
-												// data are invalid = error
 												//console.log("Données invalides")
 												res.status(400).send([false,"Données invalides"])
 												return
 											}
+											
+											//check if data are changed
+											if (req.body.choices != row.choix || questionType != row.type){
+												//check data types
+												try {
+													var data = JSON.parse(req.body.choices)
+													if(data.filter((element)=>{
+														return typeof element != "string"
+													}).length > 0){
+														res.status(400).send([false,"Données invalides"])
+														return
+													}
+												} catch(e) {
+													// data are invalid = error
+													//console.log("Données invalides")
+													res.status(400).send([false,"Données invalides"])
+													return
+												}
 
-											//console.log(data)
-											//update data base
-											let query = "UPDATE questions SET choix=?, type=? WHERE id=? AND idSondage=?"
-											db.run(query,[JSON.stringify(data),questionType,req.params.idQuestion,req.params.id],(err)=>{
-												if (err)
-													throw err
+												//console.log(data)
+												//update data base
+												let query = "UPDATE questions SET choix=?, type=? WHERE id=? AND idSondage=?"
+												db.run(query,[JSON.stringify(data),questionType,req.params.idQuestion,req.params.id],(err)=>{
+													if (err)
+														throw err
+													res.send([true,"",req.params.idQuestion])
+												})
+											} else {
 												res.send([true,"",req.params.idQuestion])
-											})
+											}
 										} else {
-											res.send([true,"",req.params.idQuestion])
+											res.send(404).send([false,"sondage or question doesn't exist"])
 										}
-									} else {
-										res.send(404).send([false,"sondage or question doesn't exist"])
-									}
-									
-								})
+										
+									})
+								}
 							} else {
 								res.status(403).send([false,"not owner"])
 							}
@@ -132,12 +136,12 @@ module.exports = (db) =>{
 
 	router.get("/",(req,res)=>{
 		req.session.tempToken = randomString() //generate random token to verify the user's identity
-		let query = "SELECT id, title, responses, strftime('Le %d/%m/%Y à %H:%M:%S', creationDate) AS creationDate, passwordNeeded FROM sondages WHERE userId =?"
+		let query = "SELECT id, title, responses, strftime('Le %d/%m/%Y à %H:%M:%S', creationDate) AS creationDate, passwordNeeded, published FROM sondages WHERE userId =?"
 		db.all(query,req.session.userId,(err,row) => {
 			if (err)
 				throw err
 			//console.log(row)
-			res.render("gestion.ejs",{connected:req.session.connected || false,row:row,token:req.session.tempToken})
+			res.render("gestion.ejs",{connected:req.session.connected || false,row:row,token:req.session.tempToken,error:req.query.error})
 		})
 	})
 
@@ -192,24 +196,29 @@ module.exports = (db) =>{
 		}
 	})
 
-
+	var publishedError = encodeURI("Le sondage a été publié et ne peut être modifié.")
 	router.get("/edit/:id",(req,res)=>{
 		isOwner(req.session.userId,req.params.id,(owner,sondageRow)=>{
 			if (owner){
-				let query = "SELECT * FROM questions WHERE idSondage=?"
-				db.all(query,[req.params.id],(err,questionsRow)=>{
-					if (err)
-						throw err
-					req.session.tempToken = randomString()
-					// console.log(questionsRow)
-					res.render("editSondage.ejs",{
-						connected:req.session.connected || false,
-						data:sondageRow,
-						questions:questionsRow,
-						token:req.session.tempToken,
-						error:req.query.error
+				if (sondageRow.published)
+				{
+					res.redirect("/gestion/?error="+publishedError)
+				} else {
+					let query = "SELECT * FROM questions WHERE idSondage=?"
+					db.all(query,[req.params.id],(err,questionsRow)=>{
+						if (err)
+							throw err
+						req.session.tempToken = randomString()
+						// console.log(questionsRow)
+						res.render("editSondage.ejs",{
+							connected:req.session.connected || false,
+							data:sondageRow,
+							questions:questionsRow,
+							token:req.session.tempToken,
+							error:req.query.error
+						})
 					})
-				})
+				}
 			} else {
 				res.redirect("/gestion/")
 			}
@@ -284,12 +293,22 @@ module.exports = (db) =>{
 			if (req.body.title.length < 4 || req.body.title.length > 50){
 				res.redirect("/gestion/edit/"+req.params.id+"?error="+encodeURI("Le titre ne fait pas la bonne longueur."))
 			}else{
-				let query = "INSERT INTO questions (idSondage,question) VALUES (?,?)"
+				isOwner(req.session.userId,req.params.id,(owner,row)=>{
+					if (owner){
+						if (row.published){
+							res.redirect("/gestion/?error="+publishedError)
+						} else {
+							let query = "INSERT INTO questions (idSondage,question) VALUES (?,?)"
 
-				db.run(query,[req.params.id,req.body.title],(err)=>{
-					if (err)
-						throw err
-					res.redirect("/gestion/edit/"+req.params.id)
+							db.run(query,[req.params.id,req.body.title],(err)=>{
+								if (err)
+									throw err
+								res.redirect("/gestion/edit/"+req.params.id)
+							})
+						}
+					} else {
+						res.redirect("/gestion/")
+					}
 				})
 			}
 		} else {
@@ -304,12 +323,16 @@ module.exports = (db) =>{
 				//console.log('connected')
 				isOwner(req.session.userId,req.params.id,(owner,row)=>{
 					if (owner){
-						let query = "DELETE FROM questions WHERE id=? AND idSondage=?"
-						db.run(query,[req.params.idQuestion,req.params.id],(err)=>{
-							if (err)
-								throw err
-							res.redirect("/gestion/edit/"+req.params.id)
-						})
+						if (row.published){
+							res.redirect("/gestion/?error="+publishedError)
+						} else {
+							let query = "DELETE FROM questions WHERE id=? AND idSondage=?"
+							db.run(query,[req.params.idQuestion,req.params.id],(err)=>{
+								if (err)
+									throw err
+								res.redirect("/gestion/edit/"+req.params.id)
+							})
+						}
 					} else {
 						res.redirect("/gestion/")
 					}
@@ -318,6 +341,25 @@ module.exports = (db) =>{
 				res.redirect("/gestion/edit/"+req.params.id)
 			}
 		} else {
+			res.redirect("/gestion/")
+		}
+	})
+
+	router.get("/publish/:id",(req,res)=>{
+		if (req.params.id.match(idPatern)){
+			isOwner(req.session.userId,req.params.id,(owner,row)=>{
+				if (owner){
+					let query = "UPDATE sondages SET published=1 WHERE id=?"
+					db.run(query,[req.params.id],(err)=>{
+						if (err)
+							throw err
+						res.redirect("/gestion/")
+					})
+				} else {
+					res.redirect("/gestion/")
+				}
+			})
+		}else {
 			res.redirect("/gestion/")
 		}
 	})

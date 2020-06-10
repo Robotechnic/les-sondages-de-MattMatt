@@ -22,6 +22,7 @@
 							<td>Réponses</td>
 							<td>Mot de passe</td>
 							<td>Date de création</td>
+							<td>Public</td>
 							<td>Actions</td>
 						</tr>
 					</thead>
@@ -40,8 +41,19 @@
 								</td>
 								<td><%=data.creationDate%></td>
 								<td>
-									<button class="editButton" id="editButton.<%=data.id%>" name="<%=data.title%>">Editer</button>
-									<button class="generateLinkButton" id="generateLinkButton.<%=data.id%>" name="<%=data.title%>">Créer un lien</button>
+									<% if (data.published) {%>
+										Oui
+									<%} else {%>
+										Non
+									<%}%>
+								</td>
+								<td>
+									<% if (!data.published){%>
+										<button class="editButton" id="editButton.<%=data.id%>" name="<%=data.title%>">Editer</button>
+										<button class="publishButton" id="publishButton.<%=data.id%>.<%=token%>" name="<%=data.title%>">Publier</button>
+									<%} else {%>
+										<button class="generateLinkButton" id="generateLinkButton.<%=data.id%>" name="<%=data.title%>">Créer un lien</button>
+									<%}%>
 									<button class="deleteButton" id="deleteButton.<%=data.id%>.<%=token%>" name="<%=data.title%>">Suprimmer</button>
 								</td>
 							</tr>
@@ -52,6 +64,12 @@
 		</div>
 	</section>
 	<%- include ("parts/footer.ejs") %>
+	<!-- Error script-->
+	<script type="text/javascript"> 
+		<% if (locals.error) {%>
+			alert("<%=error%>")
+		<% } %>
+	</script>
 	<script type="text/javascript" src="/js/gestion.js"></script>
 </body>
 </html>

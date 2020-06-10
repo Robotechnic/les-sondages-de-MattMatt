@@ -37,3 +37,14 @@ document.querySelectorAll(".editButton").forEach((element)=>{
 		window.location = String(window.location.origin)+"/gestion/edit/"+id
 	})
 })
+
+//publish buttons
+document.querySelectorAll(".publishButton").forEach((element)=>{
+	element.addEventListener("click",(event)=>{
+		let sender = event.target
+		var id = sender.id.split(".")[1]
+		var token = sender.id.split(".")[2]
+		if (confirm("Attention, la publication d'un sondage le rend impossible a modifier.\nÊtes vous sur de vouloir continuer ?\nCette action est irréversible."))
+			window.location = String(window.location.origin)+"/gestion/publish/"+id+"?token="+token
+	})
+})
