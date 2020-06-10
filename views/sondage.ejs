@@ -33,23 +33,23 @@
 										case "single":
 											%>
 											<input 	type="radio" 
-													name="responseFor.<%=question.id%>" 
+													name="responseFor.<%=data.id%>.<%=question.id%>" 
 													required 
-													id="responseFor.<%=question.id%>.<%=indexChoix%>"
+													id="responseFor.<%=data.id%>.<%=question.id%>.<%=indexChoix%>"
 													value="<%=indexChoix%>">
 											<%
 											break
 										case "multiple":
 											%>
 											<input 	type="checkbox"
-													name="responseFor.<%=question.id%>"
-													id="responseFor.<%=question.id%>.<%=indexChoix%>"
+													name="responseFor.<%=data.id%>.<%=question.id%>"
+													id="responseFor.<%=data.id%>.<%=question.id%>.<%=indexChoix%>"
 													class="normal"
 													value="<%=indexChoix%>">
 											<%
 											break
 									}%>
-									<label For="responseFor.<%=question.id%>.<%=indexChoix%>">
+									<label For="responseFor.<%=data.id%>.<%=question.id%>.<%=indexChoix%>">
 										<%=choix%>
 									</label>
 								</li>

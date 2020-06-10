@@ -83,9 +83,3 @@ app.use((app,res,next)=>{
 server.listen(port,()=>{
 	console.log("le serveur écoute sur",port)
 })
-
-// db.all("SELECT id FROM sondages",[],(err,row)=> {
-// 	if (err)
-// 		throw err
-// 	console.log(row)
-// })

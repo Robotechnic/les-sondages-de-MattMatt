@@ -167,26 +167,86 @@ module.exports = (db) =>{
 		})
 	})
 
+	var keyValidator = /responseFor.([0-9]{1,}).([0-9]{1,})/
+
+	isEmpty = (obj) => {
+	    return Object.keys(obj).length === 0;
+	}
 
 	router.post("/response/:token",(req,res)=>{
-		token.verify(req.params.token,tokenSecret,(err,decoded)=>{
+		token.verify(req.params.token,tokenSecret,(err,decoded)=>{//verify if token is valid token
 			
 			if (err)
 			{
 				console.log('err')
 				res.redirect("../../../?error="+encodeURI("Le lien est invalide"))
 			} else {
-				let query = "SELECT *,strftime('Créé le %d/%m/%Y à %H:%M:%S', creationDate) AS creationDate FROM sondages WHERE id=?"
+				db.serialize(()=>{
+					let query = "SELECT *,strftime('Créé le %d/%m/%Y à %H:%M:%S', creationDate) AS creationDate FROM sondages WHERE id=?"
 
-				db.get(query,[decoded.sondageId],(err,row)=>{
-					if (err)
-						throw err
-					if (row){
-						console.log('Réponse:',req.body)
-						res.send(req.body)
-					} else {
-						res.redirect("../../../?error="+encodeURI("Le sondage n'existe pas"))
-					}
+					db.get(query,[decoded.sondageId],(err,sondageRow)=>{ //get sondageData
+						if (err)
+							throw err
+						if (row){ //if sondage exist
+							
+							try {// try to update all
+								db.run("BEGIN TRANSACTION")
+								//update response number
+								db.run("UPDATE sondages SET responses = responses + 1 WHERE id=?",[decoded.sondageId],(err)=>{
+									if (err)
+										throw err
+								})
+
+								//update responses
+								let getResponsses = "SELECT * FROM responsses WHERE sondageId = ?"
+								for (let [key, value] of Object.entries(req.body)) {
+									let values = key.match(keyValidator)
+
+									if (values){
+										if (values[1] == decoded.sondageId){
+
+											let query = "SELECT * FROM questions WHERE id=?"
+											db.get(query,[values[2]],(err,questionRow)=>{
+												if (err)
+													throw err
+												if (row)
+													db.get(getResponsses,[decoded.sondageId],(err,responsseRow)=>{
+														if (row){
+															let data = JSON.parse(row.data)
+
+															let query = "UPDATE responsses SET data = ? WHERE sondageId = ?"
+														} else {
+															let query = "INSERT INTO responsses(sondageId,data) VALUES (?,?)"
+															db.run(query,[decoded.sondageId,""],(err)=>{
+																if (err)
+																	throw err
+															})
+														}
+													})
+											})
+										}
+									}
+									//console.log(values)
+									console.log(`${key}: ${value} ${value.constructor == Array}`);
+								}
+								//throw e //generate error for test
+								// if (typeof value == "string" && row.type == "single"){
+
+								// } else if (value.constructor == Array && row.type = "multiple"){
+
+								// }
+								//db.run("COMMIT")
+							} catch(e) {
+								console.log(e);
+								db.run("ROLLBACK")
+							}
+							
+							req.body.row = row
+							res.send(req.body)
+						} else {
+							res.redirect("../../../?error="+encodeURI("Le sondage n'existe pas"))
+						}
+					})
 				})
 			}
 		})
