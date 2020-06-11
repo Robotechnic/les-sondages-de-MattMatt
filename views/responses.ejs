@@ -41,7 +41,6 @@
 											<%
 												var percent = (responseObject[String(indexChoix)]/data.responses*100) || 0
 												percent = percent.toFixed(3)
-
 											%>
 											
 											<progress value="<%=percent%>" max="100" class="percentagePresentation__progress" id="progress.<%=question.id%>.<%=indexChoix%>"></progress>

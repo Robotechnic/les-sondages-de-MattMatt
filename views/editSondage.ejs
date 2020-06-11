@@ -46,7 +46,7 @@
 							<ol class="presentationComponent__content__list" id="list.<%=question.id%>">
 								<% var temp = JSON.parse(question.choix)
 								temp.forEach((choix,indexChoix)=>{%>
-									<li class="presentationComponent__content__list__question-element" id="choix.<%=question.id%>.<%=indexChoix%>">
+									<li class="presentationComponent__content__list__question-element center" id="choix.<%=question.id%>.<%=indexChoix%>">
 										<div 
 										class="presentationComponent__content__list__question-element__contener"
 										id="<%=question.id%>.<%=indexChoix%>.<%=token%>">
