@@ -33,7 +33,7 @@ const sessionSecret = "aRandomSecretThatMustBeChanged3141592"
 //setup session storage
 const SQLiteStore = require('connect-sqlite3')(session)
 
-app.use(session({
+sessionMiddleware = session({
 	store: new SQLiteStore({
 		db:"sondages.db",
 		dir:__dirname,
@@ -48,7 +48,9 @@ app.use(session({
 		httpOnly:true,
 		maxAge:604800000 //one week
 	}
-}))
+})
+
+app.use(sessionMiddleware)
 
 if (sessionSecret == "aRandomSecretThatMustBeChanged3141592"){
 	console.log("")
@@ -82,4 +84,17 @@ app.use((app,res,next)=>{
 
 server.listen(port,()=>{
 	console.log("le serveur écoute sur",port)
+})
+
+//socket io setup
+io.use((socket, next) => {
+    sessionMiddleware(socket.request, socket.request.res || {}, next);
+})
+
+io.on("connect",(socket)=>{
+	var session = socket.request.session
+
+	if (!session.connected){
+		socket.disconnect()
+	}
 })

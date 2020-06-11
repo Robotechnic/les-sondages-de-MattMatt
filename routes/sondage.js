@@ -151,7 +151,7 @@ module.exports = (db,io) =>{
 					if (err)
 						throw err
 					if (row){
-						console.log(row)
+						//console.log(row)
 						if (row.passwordNeeded){
 							if (row.password == req.body.password){
 								if(req.session.sondageAccess){
@@ -180,7 +180,7 @@ module.exports = (db,io) =>{
 			if (req.params.id.match(idPatern))
 				isOwner(req.session.userId,req.params.id,(owner,sondageRow)=>{
 					if (owner){
-						let questionQuery = "SELECT * FROM questions LEFT JOIN responses ON responses.questionId=questions.id WHERE questions.sondageId=?"
+						let questionQuery = "SELECT *, questions.id AS id, responses.id AS responseId FROM questions LEFT JOIN responses ON responses.questionId=questions.id WHERE questions.sondageId=?"
 						db.all(questionQuery,[req.params.id],(err,row)=>{
 							if (err)
 								console.log(err)
@@ -280,6 +280,13 @@ module.exports = (db,io) =>{
 								//throw bidule //generate error for test
 								console.log('Commit changes')
 								db.run("COMMIT")
+								let ioQuery = "SELECT * FROM responses WHERE sondageId = ?"
+								db.all(ioQuery,[sondageRow.id],(err,row)=>{
+									if (err)
+										console.log(err)
+									//console.log('sendData',row)
+									io.sockets.emit("newResponse",{total:sondageRow.responses+1,responses:row})
+								})
 							} catch(e) {
 								console.log("Erreur rencotrée:",e);
 								db.run("ROLLBACK")

@@ -44,8 +44,8 @@
 
 											%>
 											
-											<progress value="<%=percent%>" max="100" class="percentagePresentation__progress"></progress>
-											<p class="percentagePresentation__text"><%=percent%>% 
+											<progress value="<%=percent%>" max="100" class="percentagePresentation__progress" id="progress.<%=question.id%>.<%=indexChoix%>"></progress>
+											<p class="percentagePresentation__text" id="text.<%=question.id%>.<%=indexChoix%>"><%=percent%>% 
 											(<%=responseObject[String(indexChoix)] || 0%>/<%=data.responses%>)
 											</p>
 										</div>
@@ -69,5 +69,7 @@
 			alert("<%=error%>")
 		<% } %>
 	</script>
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="/js/responsesSocket.js"></script>
 </body>
 </html>
