@@ -31,7 +31,7 @@
 		&-extended{
 			@extend .presentationComponent__content;
 			max-width: 700px;
-			width: 30vw;
+			width: 80%;
 			margin-left:auto;
 			margin-right:auto;
 			&__addChoiceButton{
@@ -69,11 +69,15 @@
 
 	&__content__list__question-element__contener{
 		position:relative;
+		display:flex;
+		flex-direction: column;
 		@media screen and (min-width: map-get($breakPointMap,editSondageToolBar)){
+			display:grid;
+			grid-template-columns: 1fr 2fr;
 			&__toolbar{
-			display:none;
-			position:absolute;
-			right:0px;
+				display:none;
+				position:absolute;
+				right:0px;
 			}
 			&:hover &__toolbar{
 				display:block;

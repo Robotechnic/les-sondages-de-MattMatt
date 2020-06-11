@@ -1,11 +1,16 @@
 .percentagePresentation{
 	margin:5px;
 	margin-left:auto;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
 	&__progress{
-
+		width: 100%;
 	}
 
 	&__text{
+		width: 100%;
 		margin:none;
+		text-align:center;
 	}
 }
