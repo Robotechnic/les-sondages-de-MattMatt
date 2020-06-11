@@ -61,7 +61,7 @@ module.exports = (db) =>{
 									res.status(403).send([false,"Le sondage a été publié, il ne peut plus être modifié."])
 								} else {
 									//check if question exist and if this sondage own the question
-									let query = "SELECT choix,type FROM questions WHERE id=? AND idSondage=?"
+									let query = "SELECT choix,type FROM questions WHERE id=? AND sondageId=?"
 									db.get(query,[req.params.idQuestion,req.params.id],(err,row)=>{
 										if (err)
 											throw err
@@ -95,7 +95,7 @@ module.exports = (db) =>{
 
 												//console.log(data)
 												//update data base
-												let query = "UPDATE questions SET choix=?, type=? WHERE id=? AND idSondage=?"
+												let query = "UPDATE questions SET choix=?, type=? WHERE id=? AND sondageId=?"
 												db.run(query,[JSON.stringify(data),questionType,req.params.idQuestion,req.params.id],(err)=>{
 													if (err)
 														throw err
@@ -298,7 +298,7 @@ module.exports = (db) =>{
 						if (row.published){
 							res.redirect("/gestion/?error="+publishedError)
 						} else {
-							let query = "INSERT INTO questions (idSondage,question) VALUES (?,?)"
+							let query = "INSERT INTO questions (sondageId,question) VALUES (?,?)"
 
 							db.run(query,[req.params.id,req.body.title],(err)=>{
 								if (err)
@@ -318,7 +318,7 @@ module.exports = (db) =>{
 
 	router.get("/deleteQuestion/:id/:idQuestion",(req,res)=>{
 		if (req.params.id.match(idPatern)){
-			///console.log('tokenOk\nidSondage ok')
+			///console.log('tokenOk\nsondageId ok')
 			if (req.params.idQuestion.match(idPatern)){
 				//console.log('connected')
 				isOwner(req.session.userId,req.params.id,(owner,row)=>{
@@ -326,7 +326,7 @@ module.exports = (db) =>{
 						if (row.published){
 							res.redirect("/gestion/?error="+publishedError)
 						} else {
-							let query = "DELETE FROM questions WHERE id=? AND idSondage=?"
+							let query = "DELETE FROM questions WHERE id=? AND sondageId=?"
 							db.run(query,[req.params.idQuestion,req.params.id],(err)=>{
 								if (err)
 									throw err
