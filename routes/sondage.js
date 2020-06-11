@@ -279,13 +279,9 @@ module.exports = (db,io) =>{
 								}
 								//throw bidule //generate error for test
 								console.log('Commit changes')
-								db.run("COMMIT")
-								let ioQuery = "SELECT * FROM responses WHERE sondageId = ?"
-								db.all(ioQuery,[sondageRow.id],(err,row)=>{
+								db.run("COMMIT",(err)=>{
 									if (err)
-										console.log(err)
-									//console.log('sendData',row)
-									io.sockets.emit("newResponse",{total:sondageRow.responses+1,responses:row})
+										throw err
 								})
 							} catch(e) {
 								console.log("Erreur rencotrée:",e);
@@ -293,6 +289,15 @@ module.exports = (db,io) =>{
 							}
 							//req.body.row = row
 							res.redirect("../../?error="+encodeURI("Votre participation a bien étée prise en compte"))
+							setTimeout(()=>{
+								let ioQuery = "SELECT * FROM responses WHERE sondageId = ?"
+								db.all(ioQuery,[sondageRow.id],(err,row)=>{
+									if (err)
+										console.log(err)
+									console.log('sendData',row)
+									io.sockets.emit("newResponse",{total:sondageRow.responses+1,responses:row})
+								})
+							}, 2000)
 						} else {
 							res.redirect("../../../?error="+encodeURI("Le sondage n'existe pas"))
 						}

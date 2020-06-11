@@ -9,7 +9,7 @@ socket.on("disconnect",(data)=>{
 })
 
 socket.on("newResponse",(data)=>{
-	//console.log("new response",data)
+	console.log("new response",data)
 	var total = data.total
 	var data = data.responses
 	//console.log(total)
@@ -21,11 +21,9 @@ socket.on("newResponse",(data)=>{
 			let progress = document.getElementById("progress."+String(element.questionId)+"."+String(key))
 			let text = document.getElementById("text."+String(element.questionId)+"."+String(key))
 			let percent = (value/total*100) || 0
-			//console.log(key,total,value,percent)
 			progress.value = percent
 
 			text.innerText = `${percent.toFixed(3)}% (${value}/${total})`
-			//console.log(key,value)
 		}
 		//console.log(idQuestion,newData)
 	})

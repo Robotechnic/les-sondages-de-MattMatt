@@ -57,7 +57,7 @@ module.exports = (db) =>{
 						//check if the session own this sondage
 						isOwner(req.session.userId,req.params.id,(owner,sondageData)=>{
 							if (owner){
-								if (row.published){
+								if (sondageData.published){
 									res.status(403).send([false,"Le sondage a été publié, il ne peut plus être modifié."])
 								} else {
 									//check if question exist and if this sondage own the question
