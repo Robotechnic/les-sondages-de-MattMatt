@@ -30,7 +30,7 @@
 		"helmet": "^3.22.0",
 		"jsonwebtoken": "^8.5.1",
 		"node-gyp": "^6.1.0",
-		"socket.io": "^2.3.0",
+		"socket.io": "^2.5.0",
 		"sqlite3": "^4.2.0"
 	},
 	"browserslist": "last 4 versions",
